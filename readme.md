@@ -1,1 +1,1 @@
-TripPlanner: itinerários para transportes públicos
+TripPlanner: optimização de itinerários para transportes públicos
