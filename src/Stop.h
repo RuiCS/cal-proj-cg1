@@ -10,6 +10,7 @@
 
 #include <string>
 #include <utility>
+#include <cmath>
 using namespace std;
 
 class Stop {
@@ -38,6 +39,11 @@ public:
 	void setLatitude(float lat);
 	void setLongitude(float lon);
 	void setPole(string p);
+
+	//Methods
+	float calcDistance(Stop s);
+	float calcDistance(pair<float, float> coord);
+	float calcDistance(float lat, float lon);
 
 };
 
@@ -96,6 +102,47 @@ void Stop::setCoords(float lat, float lon){
 
 void Stop::setPole(string p){
 	pole = p;
+}
+
+// Distance between Coordinates ------------------------------------------------------
+
+float distance(pair<float, float> coord1, pair<float, float> coord2) {
+	float distance;
+
+	// Calculated using the Haversine Formula
+	float a, c, deltaLat, deltaLon;
+	deltaLat = abs(abs(coord1.first) - abs(coord2.first));
+	deltaLon = abs(abs(coord1.second) - abs(coord2.second));
+
+	// a = sin^2 (deltaLat /2) + cos(lat1)*cos(lat2)*sin^2(deltaLon/2)
+	a = (sin(deltaLat/2)*sin(deltaLat/2)) + cos(coord1.first)*cos(coord2.first)*(sin(deltaLon/2)*sin(deltaLon/2));
+
+	// c = 2 * atan2 ( sqrt(a), sqrt(1-a))
+	c = 2 * atan2( sqrt(a), sqrt(1-a));
+
+	// d = R * c, where R is the radius of the Earth
+	int R = 6371000;
+	distance = R * c;
+
+	return distance;
+}
+
+float distance(float lat1, float lon1, float lat2, float lon2) {
+	return distance(pair<float, float> (lat1, lon1), pair<float, float> (lat2, lon2));
+}
+
+// Methods ---------------------------------------------------------------------------
+
+float Stop::calcDistance(Stop s){
+	return distance(coords, s.getCoords());
+}
+
+float Stop::calcDistance(pair<float, float> coord){
+	return distance(coords, coord);
+}
+
+float Stop::calcDistance(float lat, float lon){
+	return distance(coords, pair<float, float> (lat, lon));
 }
 
 #endif /* SRC_STOP_H_ */
