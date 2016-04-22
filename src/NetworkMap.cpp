@@ -27,9 +27,9 @@ bool NetworkMap::loadMap(string filepath) {
         stringstream lonStream(slon);
         lonStream >> lon;
 
-        cout << "Stop(" << name << ", " << lat << ", " << lon << ", " << node << ", (!!!!)" << zone <<  ");\n";
+        cout << "Stop(" << name << ", " << lat << ", " << lon << ", " << node << ", " << zone <<  ");\n";
 
-        Stop stop = Stop(name, lat, lon, node);
+        Stop stop = Stop(name, lat, lon, node, zone);
         map.addVertex(stop);
 
         //...

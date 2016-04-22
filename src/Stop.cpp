@@ -2,9 +2,9 @@
 
 // Constructors -----------------------------------------------------------------
 
-Stop::Stop() : name(""), coords({0.0, 0.0}), node("") {}
+Stop::Stop() : name(""), coords({0.0, 0.0}), node(""), zone("") {}
 
-Stop::Stop(string n, float lat, float lon, string nod) : name(n), coords({lat, lon}), node(nod) {}
+Stop::Stop(string n, float lat, float lon, string nod, string zon) : name(n), coords({lat, lon}), node(nod), zone(zon) {}
 
 // Getters ----------------------------------------------------------------------
 
@@ -22,6 +22,10 @@ float Stop::getLongitude() const{
 
 string Stop::getNode() const {
 	return node;
+}
+
+string Stop::getZone() const {
+	return zone;
 }
 
 // Setters ----------------------------------------------------------------------
@@ -45,6 +49,10 @@ void Stop::setCoords(float lat, float lon){
 
 void Stop::setNode(string p){
 	node = p;
+}
+
+void Stop::setZone(string zon){
+	zone = zon;
 }
 
 // Distance between Coordinates ------------------------------------------------------

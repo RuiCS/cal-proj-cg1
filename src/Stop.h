@@ -20,18 +20,19 @@ class Stop {
 
 	string name;
 	float coords[2];
-	string node;
+	string node, zone;
 
 public:
 	//Constructors
 	Stop();
-	Stop(string n, float lat, float lon, string nod);
+	Stop(string n, float lat, float lon, string nod, string zon);
 
 	//Getters
 	string getName() const;
 	float getLatitude() const;
 	float getLongitude() const;
 	string getNode() const;
+	string getZone() const;
 
 	//Setters
 	void setName(string n);
@@ -39,6 +40,7 @@ public:
 	void setLatitude(float lat);
 	void setLongitude(float lon);
 	void setNode(string p);
+	void setZone(string zon);
 
 	//Methods
 	float calcDistance(Stop s);
