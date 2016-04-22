@@ -1,8 +1,8 @@
 /*
  * Graph.h
  */
-#ifndef GRAPH_H_
-#define GRAPH_H_
+#ifndef SRC_GRAPH_H_
+#define SRC_GRAPH_H_
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -684,7 +684,7 @@ int Graph<T>::edgeCost(int vOrigIndex, int vDestIndex)
 	return INT_INFINITY;
 }
 
-
+/*
 void printSquareArray(int ** arr, unsigned int size)
 {
 	for(unsigned int k = 0; k < size; k++)
@@ -710,7 +710,7 @@ void printSquareArray(int ** arr, unsigned int size)
 
 		cout << endl;
 	}
-}
+}*/
 
 
 template<class T>
