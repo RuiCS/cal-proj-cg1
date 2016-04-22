@@ -17,20 +17,20 @@ class Stop {
 
 	string name;
 	pair<float, float> coords;
-	string pole;
+	string node;
 
 public:
 	//Constructors
 	Stop();
-	Stop(string n, float lat, float lon, string pol);
-	Stop(string n, pair<float, float> coord, string pol);
+	Stop(string n, float lat, float lon, string nod);
+	Stop(string n, pair<float, float> coord, string nod);
 
 	//Getters
 	string getName() const;
 	pair<float, float> getCoords() const;
 	float getLatitude() const;
 	float getLongitude() const;
-	string getPole() const;
+	string getNode() const;
 
 	//Setters
 	void setName(string n);
@@ -38,7 +38,7 @@ public:
 	void setCoords(float lat, float lon);
 	void setLatitude(float lat);
 	void setLongitude(float lon);
-	void setPole(string p);
+	void setNode(string p);
 
 	//Methods
 	float calcDistance(Stop s);
@@ -49,11 +49,11 @@ public:
 
 // Constructors -----------------------------------------------------------------
 
-Stop::Stop() : name(""), coords(pair<float, float> (0.0, 0.0)), pole("") {}
+Stop::Stop() : name(""), coords(pair<float, float> (0.0, 0.0)), node("") {}
 
-Stop::Stop(string n, float lat, float lon, string pol) : name(n), coords(pair<float, float> (lat, lon)), pole(pol) {}
+Stop::Stop(string n, float lat, float lon, string nod) : name(n), coords(pair<float, float> (lat, lon)), node(nod) {}
 
-Stop::Stop(string n, pair<float, float> coord, string pol) : name(n), coords(coord), pole(pol) {}
+Stop::Stop(string n, pair<float, float> coord, string nod) : name(n), coords(coord), node(nod) {}
 
 // Getters ----------------------------------------------------------------------
 
@@ -73,8 +73,8 @@ float Stop::getLongitude() const{
 	return coords.second;
 }
 
-string Stop::getPole() const {
-	return pole;
+string Stop::getNode() const {
+	return node;
 }
 
 // Setters ----------------------------------------------------------------------
@@ -100,8 +100,8 @@ void Stop::setCoords(float lat, float lon){
 	coords.second = lon;
 }
 
-void Stop::setPole(string p){
-	pole = p;
+void Stop::setNode(string p){
+	node = p;
 }
 
 // Distance between Coordinates ------------------------------------------------------
