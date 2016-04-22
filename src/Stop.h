@@ -45,6 +45,9 @@ public:
 	float calcDistance(pair<float, float> coord);
 	float calcDistance(float lat, float lon);
 
+	//Operator Overloading
+	friend bool operator==(const Stop& s1, const Stop &s2);
+
 };
 
 // Constructors -----------------------------------------------------------------
@@ -143,6 +146,12 @@ float Stop::calcDistance(pair<float, float> coord){
 
 float Stop::calcDistance(float lat, float lon){
 	return distance(coords, pair<float, float> (lat, lon));
+}
+
+// Operator Overloading ---------------------------------------------------------------------------
+
+bool operator==(const Stop& s1, const Stop& s2) {
+	return s1.name == s2.name;
 }
 
 #endif /* SRC_STOP_H_ */
