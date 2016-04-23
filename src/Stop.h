@@ -48,6 +48,7 @@ public:
 
 	//Operator Overloading
 	friend bool operator==(const Stop& s1, const Stop &s2);
+	void operator<< (ostream &o);
 
 };
 

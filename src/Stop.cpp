@@ -93,3 +93,7 @@ float Stop::calcDistance(float lat, float lon){
 bool operator==(const Stop& s1, const Stop& s2) {
 	return s1.name == s2.name;
 }
+
+void Stop::operator<< (ostream &o){
+	o << name;
+}

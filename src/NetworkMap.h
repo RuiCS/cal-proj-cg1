@@ -21,8 +21,15 @@ public:
 	//Constructors
 	NetworkMap();
 
+	//Getters
+	Graph<Stop> getMap() const;
+
+	//Setters
+	void setMap(Graph<Stop> m);
+
 	//Methods
 	bool loadMap(string filepath);
+	void setConnections();
 };
 
 #endif /* SRC_NETWORKMAP_H_ */
