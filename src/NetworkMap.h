@@ -30,6 +30,7 @@ public:
 	//Methods
 	bool loadMap(string filepath);
 	void setConnections();
+	void displayMap();
 };
 
 #endif /* SRC_NETWORKMAP_H_ */

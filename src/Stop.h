@@ -21,11 +21,12 @@ class Stop {
 	string name;
 	float coords[2];
 	string node, zone;
+	int wait_time;
 
 public:
 	//Constructors
 	Stop();
-	Stop(string n, float lat, float lon, string nod, string zon);
+	Stop(string n, float lat, float lon, int time, string nod, string zon);
 
 	//Getters
 	string getName() const;
@@ -33,6 +34,7 @@ public:
 	float getLongitude() const;
 	string getNode() const;
 	string getZone() const;
+	int getWaitTime() const;
 
 	//Setters
 	void setName(string n);
@@ -41,6 +43,7 @@ public:
 	void setLongitude(float lon);
 	void setNode(string p);
 	void setZone(string zon);
+	void setWaitTime(int waitTime);
 
 	//Methods
 	float calcDistance(Stop s);

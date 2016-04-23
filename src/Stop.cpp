@@ -4,7 +4,7 @@
 
 Stop::Stop() : name(""), coords({0.0, 0.0}), node(""), zone("") {}
 
-Stop::Stop(string n, float lat, float lon, string nod, string zon) : name(n), coords({lat, lon}), node(nod), zone(zon) {}
+Stop::Stop(string n, float lat, float lon, int time, string nod, string zon) : name(n), coords({lat, lon}), wait_time(time), node(nod), zone(zon) {}
 
 // Getters ----------------------------------------------------------------------
 
@@ -26,6 +26,10 @@ string Stop::getNode() const {
 
 string Stop::getZone() const {
 	return zone;
+}
+
+int Stop::getWaitTime() const{
+	return wait_time;
 }
 
 // Setters ----------------------------------------------------------------------
@@ -53,6 +57,10 @@ void Stop::setNode(string p){
 
 void Stop::setZone(string zon){
 	zone = zon;
+}
+
+void Stop::setWaitTime(int waitTime){
+	wait_time = waitTime;
 }
 
 // Distance between Coordinates ------------------------------------------------------

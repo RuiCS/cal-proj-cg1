@@ -1,4 +1,7 @@
 #include "NetworkMap.h"
+#include <algorithm>
+#include <stdlib.h>
+#include <string.h>
 
 // Constructors -----------------------------------------------------------------
 
@@ -21,7 +24,7 @@ void NetworkMap::setMap(Graph<Stop> m){
 // Methods -----------------------------------------------------------------
 
 bool NetworkMap::loadMap(string filepath) {
-    string node, name, zone, slat, slon;
+    string node, name, zone, slat, slon, time;
     float lat, lon;
 
 	ifstream infile(filepath.c_str());
@@ -31,6 +34,7 @@ bool NetworkMap::loadMap(string filepath) {
         getline(lineStream, node, ',');
         getline(lineStream, name, ',');
         getline(lineStream, zone, ',');
+        getline(lineStream, time, ',');
         getline(lineStream, slat, ',');
         getline(lineStream, slon, ',');
 
@@ -39,9 +43,11 @@ bool NetworkMap::loadMap(string filepath) {
         stringstream lonStream(slon);
         lonStream >> lon;
 
-        cout << "Stop(" << name << ", " << lat << ", " << lon << ", " << node << ", " << zone <<  ");\n";
+        cout << "Stop(" << name << ", " << lat << ", " << lon << ", " << node << ", " << zone << ", " << time << ");\n";
 
-        Stop stop = Stop(name, lat, lon, node, zone);
+        int intTime = atoi(time.c_str());
+
+        Stop stop = Stop(name, lat, lon, intTime, node, zone);
         map.addVertex(stop);
 
         //...
@@ -70,8 +76,8 @@ void NetworkMap::setConnections(){
 
 		if (line1 == line2){
 			// PESO ?????????????????????????
-			map.addEdge(map.getVertexSet()[i]->getInfo(), map.getVertexSet()[i + 1]->getInfo(), 0);
-			map.addEdge(map.getVertexSet()[i + 1]->getInfo(), map.getVertexSet()[i]->getInfo(), 0);
+			map.addEdge(map.getVertexSet()[i]->getInfo(), map.getVertexSet()[i + 1]->getInfo(), map.getVertexSet()[i + 1]->getInfo().getWaitTime());
+			map.addEdge(map.getVertexSet()[i + 1]->getInfo(), map.getVertexSet()[i]->getInfo(), map.getVertexSet()[i + 1]->getInfo().getWaitTime());
 		}
 
 	}
@@ -91,6 +97,49 @@ void NetworkMap::setConnections(){
 				}
 			}
 		}
+	}
+}
+
+// Auxiliar Method
+bool exists_in_vector(vector<string> v, string s){
+	for (unsigned int i = 0; i < v.size(); i++)
+		if (v[i] == s)
+			return true;
+	return false;
+}
+
+// Display alphabetically ordered graph
+void NetworkMap::displayMap(){
+
+	vector<string> visited_nodes;
+	vector<string> to_output;
+
+	for (unsigned int i = 0 ; i < map.getVertexSet().size() ; i++){
+
+		if (exists_in_vector(visited_nodes, map.getVertexSet()[i]->getInfo().getNode())) continue;
+
+		visited_nodes.push_back(map.getVertexSet()[i]->getInfo().getNode());
+		string output;
+
+		output += map.getVertexSet()[i]->getInfo().getName();
+		output += " is connected to ";
+		stringstream ss;
+		ss << map.getVertexSet()[i]->getAdj().size();
+		output += ss.str();
+		output += " stop(s): \n";
+
+		for (unsigned int j = 0; j < map.getVertexSet()[i]->getAdj().size(); j++){
+			output += map.getVertexSet()[i]->getAdj()[j].getDest()->getInfo().getName() + "\n";
+		}
+
+		output += "\n";
+		to_output.push_back(output);
+
+	}
+
+	sort(to_output.begin(), to_output.end());
+	for (unsigned int k = 0; k < to_output.size(); k++){
+		cout << to_output[k];
 	}
 
 }
