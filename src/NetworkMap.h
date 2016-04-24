@@ -33,4 +33,8 @@ public:
 	void displayMap();
 };
 
+bool exists_in_vector(vector<string> v, string s);
+void graphView();
+int findVertexInVector(vector <Vertex<Stop>*> vertexSet, Vertex<Stop>* to_find);
+
 #endif /* SRC_NETWORKMAP_H_ */

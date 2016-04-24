@@ -2,6 +2,11 @@
 #include <algorithm>
 #include <stdlib.h>
 #include <string.h>
+#include <cstdio>
+#include "graphviewer.h"
+#include <fstream>
+#include <iostream>
+#include <sstream>
 
 // Constructors -----------------------------------------------------------------
 
@@ -141,5 +146,65 @@ void NetworkMap::displayMap(){
 	for (unsigned int k = 0; k < to_output.size(); k++){
 		cout << to_output[k];
 	}
+}
+
+// Auxiliary Method for graphView()
+int findVertexInVector(vector <Vertex<Stop>*> vertexSet, Vertex<Stop>* to_find){
+	for (int i = 0; i < vertexSet.size() ; i++){
+		if (to_find->getInfo().getName() == vertexSet[i]->getInfo().getName()){
+			return i;
+		}
+	}
+	return -1;
+}
+
+// Display Graph with GraphViewer
+void graphView(){
+
+	GraphViewer *gv = new GraphViewer(600, 600, false);
+
+	NetworkMap nm = NetworkMap();
+	nm.loadMap("input.txt");
+	nm.setConnections();
+
+	gv->createWindow(600, 600);
+
+	gv->defineEdgeColor("blue");
+	gv->defineVertexColor("yellow");
+
+	int edgeID = 0;
+
+	for (unsigned int i = 0; i < nm.getMap().getVertexSet().size(); i++){
+		stringstream liness(nm.getMap().getVertexSet()[i]->getInfo().getName());
+		string trash, line;
+		getline(liness, trash, '-');
+		getline(liness, line);
+		int x = 100, y = 0;
+		if (line == " C"){
+			x = 100; y = 100;
+		} else if (line == " D"){
+			x = 100; y = 200;
+		} else if (line == " F"){
+			x = 100; y = 300;
+		}
+		gv->addNode(i, x + i * 20, y );
+		gv->setVertexLabel(i, nm.getMap().getVertexSet()[i]->getInfo().getName());
+	}
+
+	for (unsigned int j = 0; j < nm.getMap().getVertexSet().size(); j++){
+		for (unsigned int k = 0; k < nm.getMap().getVertexSet()[j]->getAdj().size(); k++){
+
+			int indice = findVertexInVector(nm.getMap().getVertexSet(), nm.getMap().getVertexSet()[j]->getAdj()[k].getDest());
+			if (indice != -1){
+				gv->addEdge(edgeID, j, indice, EdgeType::DIRECTED);
+				edgeID++;
+			}
+		}
+	}
+
+	Sleep(2000);
+
+	gv->rearrange();
+
 
 }
