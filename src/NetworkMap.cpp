@@ -81,8 +81,12 @@ void NetworkMap::setConnections(){
 
 		if (line1 == line2){
 			// PESO ?????????????????????????
-			map.addEdge(map.getVertexSet()[i]->getInfo(), map.getVertexSet()[i + 1]->getInfo(), map.getVertexSet()[i + 1]->getInfo().getWaitTime());
-			map.addEdge(map.getVertexSet()[i + 1]->getInfo(), map.getVertexSet()[i]->getInfo(), map.getVertexSet()[i + 1]->getInfo().getWaitTime());
+			//map.addEdge(map.getVertexSet()[i]->getInfo(), map.getVertexSet()[i + 1]->getInfo(), map.getVertexSet()[i + 1]->getInfo().getWaitTime());
+			//map.addEdge(map.getVertexSet()[i + 1]->getInfo(), map.getVertexSet()[i]->getInfo(), map.getVertexSet()[i + 1]->getInfo().getWaitTime());
+			//map.addEdge(map.getVertexSet()[i]->getInfo(), map.getVertexSet()[i + 1]->getInfo(), map.getVertexSet()[i]->getInfo().calcDistance(map.getVertexSet()[i + 1]->getInfo()));
+			//map.addEdge(map.getVertexSet()[i + 1]->getInfo(), map.getVertexSet()[i]->getInfo(), map.getVertexSet()[i + 1]->getInfo().calcDistance(map.getVertexSet()[i]->getInfo()));
+			map.addEdge(map.getVertexSet()[i]->getInfo(), map.getVertexSet()[i + 1]->getInfo(), map.getVertexSet()[i]->getInfo().calcTimeBetween(map.getVertexSet()[i + 1]->getInfo(), SUBWAY_VEL) + SUBWAY_INSTOP);
+			map.addEdge(map.getVertexSet()[i + 1]->getInfo(), map.getVertexSet()[i]->getInfo(), map.getVertexSet()[i + 1]->getInfo().calcTimeBetween(map.getVertexSet()[i]->getInfo(), SUBWAY_VEL) + SUBWAY_INSTOP);
 		}
 
 	}
@@ -97,8 +101,7 @@ void NetworkMap::setConnections(){
 				stop_node2 = map.getVertexSet()[j]->getInfo().getNode();
 
 				if (stop_node1 == stop_node2){
-					// PESO ??????????????
-					map.addEdge(map.getVertexSet()[i]->getInfo(), map.getVertexSet()[j]->getInfo(), 0);
+					map.addEdge(map.getVertexSet()[i]->getInfo(), map.getVertexSet()[j]->getInfo(), map.getVertexSet()[i]->getInfo().getWaitTime());
 				}
 			}
 		}
@@ -146,6 +149,7 @@ void NetworkMap::displayMap(){
 	for (unsigned int k = 0; k < to_output.size(); k++){
 		cout << to_output[k];
 	}
+
 }
 
 // Auxiliary Method for graphView()
@@ -159,13 +163,10 @@ int findVertexInVector(vector <Vertex<Stop>*> vertexSet, Vertex<Stop>* to_find){
 }
 
 // Display Graph with GraphViewer
-void graphView(){
+void graphView( NetworkMap nm){
 
 	GraphViewer *gv = new GraphViewer(600, 600, false);
 
-	NetworkMap nm = NetworkMap();
-	nm.loadMap("input.txt");
-	nm.setConnections();
 
 	gv->createWindow(600, 600);
 
@@ -208,6 +209,72 @@ void graphView(){
 	Sleep(2000);
 
 	gv->rearrange();
+}
 
+float NetworkMap::calcTimeBetween(const Stop &s1, const Stop &s2){
+
+	float time_elapsed = 0.0;
+
+	vector<Stop> path;
+	map.unweightedShortestPath(s1);
+	path = map.getPath(s1, s2);
+
+	for (unsigned int i = 0; i < path.size() - 1; i++){
+		if (path[i].calcTimeBetween(path[i+1], SUBWAY_VEL) == 0){
+			time_elapsed += path[i+1].getWaitTime();
+			//cout << "PARAGEM " << path[i].getName() << " TO " << path[i+1].getName() << ". TIME TO ADD: " << path[i+1].getWaitTime() << endl;
+		}
+		else{
+			time_elapsed += path[i].calcTimeBetween(path[i+1], SUBWAY_VEL) + SUBWAY_INSTOP;
+			//cout << "PARAGEM " <<  path[i].getName() << " TO " << path[i+1].getName() << ". TIME TO ADD: " << path[i].calcTimeBetween(path[i+1], SUBWAY_VEL) << endl;
+		}
+	}
+
+	return time_elapsed;
 
 }
+
+void NetworkMap::calcTimeBetweenStops(){
+
+	string stop1_node, stop2_node;
+
+	cout << "Insert the first stop's code: ";
+	cin >> stop1_node;
+
+	Stop s1(stop1_node);
+
+	Vertex<Stop>* s1_v = NULL;
+
+	for (int i = 0; i < map.getVertexSet().size() ; i++){
+		if (map.getVertexSet()[i]->getInfo().getNode() == stop1_node){
+			s1_v = map.getVertexSet()[i];
+		}
+	}
+
+	if (s1_v == NULL){
+		cout << "Not found..." << endl;
+		return;
+	}
+
+	Vertex<Stop>* s2_v = NULL;
+
+	cout << "Insert the second stop's code: ";
+	cin >> stop2_node;
+
+	Stop s2(stop2_node);
+
+	for (int i = 0; i < map.getVertexSet().size() ; i++){
+		if (map.getVertexSet()[i]->getInfo().getNode() == stop2_node){
+			s2_v = map.getVertexSet()[i];
+		}
+	}
+
+	if (s2_v == NULL){
+		cout << "Not found..." << endl;
+		return;
+	}
+
+	cout << "Time between stops: " << calcTimeBetween(s1_v->getInfo(), s2_v->getInfo());
+}
+
+

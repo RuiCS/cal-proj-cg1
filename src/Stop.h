@@ -27,6 +27,7 @@ public:
 	//Constructors
 	Stop();
 	Stop(string n, float lat, float lon, int time, string nod, string zon);
+	Stop(string n);
 
 	//Getters
 	string getName() const;
@@ -48,9 +49,12 @@ public:
 	//Methods
 	float calcDistance(Stop s);
 	float calcDistance(float lat, float lon);
+	float calcTimeBetween(Stop s, int velocity);
+	float calcTimeBetween(float lat, float lon, int velocity);
 
 	//Operator Overloading
 	friend bool operator==(const Stop& s1, const Stop &s2);
+	friend bool operator!= (const Stop& s1, const Stop &s2);
 	void operator<< (ostream &o);
 
 };

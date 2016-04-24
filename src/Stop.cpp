@@ -1,11 +1,15 @@
 #include "Stop.h"
+#include <iostream>
+#include <math.h>
+using namespace std;
 
 // Constructors -----------------------------------------------------------------
 
-Stop::Stop() : name(""), coords({0.0, 0.0}), node(""), zone("") {}
+Stop::Stop() : name(""), coords({0.0, 0.0}), node(""), zone(""), wait_time(0) {}
 
 Stop::Stop(string n, float lat, float lon, int time, string nod, string zon) : name(n), coords({lat, lon}), wait_time(time), node(nod), zone(zon) {}
 
+Stop::Stop(string n) : name(""), coords({0.0, 0.0}), node(n), zone(""), wait_time(0)  {}
 // Getters ----------------------------------------------------------------------
 
 string Stop::getName() const {
@@ -63,27 +67,41 @@ void Stop::setWaitTime(int waitTime){
 	wait_time = waitTime;
 }
 
-// Distance between Coordinates ------------------------------------------------------
+// Distance between Coordinates (in meters) ------------------------------------------------------
 
 float distance(float lat1, float lon1, float lat2, float lon2) {
 	float distance;
 
 	// Calculated using the Haversine Formula
 	float a, c, deltaLat, deltaLon;
-	deltaLat = abs(abs(lat1) - abs(lat2));
-	deltaLon = abs(abs(lon1) - abs(lon2));
+	float to_radians = M_PI / 180;
+	deltaLat = (lat2 - lat1) * to_radians;
+	deltaLon = (lon2 - lon1) * to_radians;
 
 	// a = sin^2 (deltaLat /2) + cos(lat1)*cos(lat2)*sin^2(deltaLon/2)
-	a = (sin(deltaLat/2)*sin(deltaLat/2)) + cos(lat1)*cos(lat2)*(sin(deltaLon/2)*sin(deltaLon/2));
-
+	a = (sin(deltaLat/2)*sin(deltaLat/2)) + cos(lat1 * to_radians)*cos(lat2 * to_radians)*(sin(deltaLon/2)*sin(deltaLon/2));
 	// c = 2 * atan2 ( sqrt(a), sqrt(1-a))
 	c = 2 * atan2( sqrt(a), sqrt(1-a));
-
 	// d = R * c, where R is the radius of the Earth
 	int R = 6371000;
 	distance = R * c;
 
 	return distance;
+}
+
+// Calculate Time between Coordinates (with velocity in km/h) (time in seconds) ------------------------------------------------
+
+float timeBetween(float lat1, float lon1, float lat2, float lon2, int velocity){
+
+	// velocity in m/s
+	float velocity_ms = velocity * 1000 / 3600;
+	float d = distance(lat1, lon1, lat2, lon2);
+
+	if ( round(d == 0) ){
+		return 0.0;
+	}
+	else return d / velocity_ms;
+
 }
 
 // Methods ---------------------------------------------------------------------------
@@ -96,6 +114,14 @@ float Stop::calcDistance(float lat, float lon){
 	return distance(coords[LAT], coords[LON], lat, lon);
 }
 
+float Stop::calcTimeBetween(Stop s, int velocity){
+	return timeBetween(coords[LAT], coords[LON], s.getLatitude(), s.getLongitude(), velocity);
+}
+
+float Stop::calcTimeBetween(float lat ,float lon, int velocity){
+	return timeBetween(coords[LAT], coords[LON], lat, lon, velocity);
+}
+
 // Operator Overloading ---------------------------------------------------------------------------
 
 bool operator==(const Stop& s1, const Stop& s2) {
@@ -104,4 +130,8 @@ bool operator==(const Stop& s1, const Stop& s2) {
 
 void Stop::operator<< (ostream &o){
 	o << name;
+}
+
+bool operator!= (const Stop& s1, const Stop &s2) {
+	return s1.name != s2.name;
 }

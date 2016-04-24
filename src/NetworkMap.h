@@ -13,6 +13,9 @@
 
 using namespace std;
 
+#define SUBWAY_VEL 50
+#define SUBWAY_INSTOP 60
+
 class NetworkMap {
 
 	Graph<Stop> map;
@@ -31,10 +34,12 @@ public:
 	bool loadMap(string filepath);
 	void setConnections();
 	void displayMap();
+	float calcTimeBetween(const Stop &s1, const Stop &s2);
+	void calcTimeBetweenStops();
 };
 
 bool exists_in_vector(vector<string> v, string s);
-void graphView();
+void graphView(NetworkMap nm);
 int findVertexInVector(vector <Vertex<Stop>*> vertexSet, Vertex<Stop>* to_find);
 
 #endif /* SRC_NETWORKMAP_H_ */

@@ -6,14 +6,13 @@
 using namespace std;
 
 int main(void) {
-	/*NetworkMap nm = NetworkMap();
+
+	NetworkMap nm = NetworkMap();
 	nm.loadMap("input.txt");
 	nm.setConnections();
+	graphView(nm);
 	nm.displayMap();
-	*/
-
-	graphView();
-	getchar();
+	nm.calcTimeBetweenStops();
 
 	return 0;
 }
