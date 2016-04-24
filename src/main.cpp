@@ -5,16 +5,50 @@
 
 using namespace std;
 
+void runInterface(){
+
+	int option;
+
+	cout << "Welcome." << endl;
+
+	cout << "1 - Load from file" << endl;
+	cout << "2 - Quit" << endl;
+
+	cin >> option;
+	NetworkMap nm;
+	switch(option){
+	case 1: {
+		nm = NetworkMap();
+		nm.loadMap("input.txt");
+		nm.setConnections();
+		break;
+	}
+	case 2: exit(0); break;
+	default: exit(1); break;
+	}
+
+
+	while (true){
+		cout << "1 - Display Graph with GraphViewer" << endl;
+		cout << "2 - Display Graph in text" << endl;
+		cout << "3 - Time between..." << endl;
+		cout << "4 - Line Switches between..." << endl;
+		cout << "5 - Quit" << endl;
+		cin >> option;
+		switch(option){
+		case 1:	graphView(nm); break;
+		case 2: nm.displayMap(); break;
+		case 3: nm.calcTimeBetweenStops(); break;
+		case 4: nm.calcSwitchesBetweenStops(); break;
+		case 5: exit(0); break;
+		default: exit(1); break;
+		}
+	}
+
+}
+
 int main(void) {
 
-	NetworkMap nm = NetworkMap();
-	nm.loadMap("input.txt");
-	nm.setConnections();
-	graphView(nm);
-	nm.displayMap();
-	nm.calcTimeBetweenStops();
-	cout << endl;
-	nm.calcSwitchesBetweenStops();
-
+	runInterface();
 	return 0;
 }

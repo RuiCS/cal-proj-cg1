@@ -34,9 +34,9 @@ public:
 	bool loadMap(string filepath);
 	void setConnections();
 	void displayMap();
-	float calcTimeBetween(const Stop &s1, const Stop &s2);
+	float calcTimeBetween(const Stop &s1, const Stop &s2, int velocity, int timeInStops, vector<Stop> &stops);
 	void calcTimeBetweenStops();
-	int calcNumberOfLineSwitchesBetween(const Stop &s1, const Stop &s2);
+	int calcNumberOfLineSwitchesBetween(const Stop &s1, const Stop &s2, vector<Stop> &stops);
 	void calcSwitchesBetweenStops();
 };
 
