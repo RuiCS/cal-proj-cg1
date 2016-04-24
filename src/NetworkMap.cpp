@@ -80,11 +80,8 @@ void NetworkMap::setConnections(){
 		getline(st2, line2);
 
 		if (line1 == line2){
-			// PESO ?????????????????????????
-			//map.addEdge(map.getVertexSet()[i]->getInfo(), map.getVertexSet()[i + 1]->getInfo(), map.getVertexSet()[i + 1]->getInfo().getWaitTime());
-			//map.addEdge(map.getVertexSet()[i + 1]->getInfo(), map.getVertexSet()[i]->getInfo(), map.getVertexSet()[i + 1]->getInfo().getWaitTime());
-			//map.addEdge(map.getVertexSet()[i]->getInfo(), map.getVertexSet()[i + 1]->getInfo(), map.getVertexSet()[i]->getInfo().calcDistance(map.getVertexSet()[i + 1]->getInfo()));
-			//map.addEdge(map.getVertexSet()[i + 1]->getInfo(), map.getVertexSet()[i]->getInfo(), map.getVertexSet()[i + 1]->getInfo().calcDistance(map.getVertexSet()[i]->getInfo()));
+			cout << "PARAGEM: " << map.getVertexSet()[i]->getInfo().getName() << endl;
+			cout << "COORDS1 " << map.getVertexSet()[i]->getInfo().getLatitude() << ", " << map.getVertexSet()[i]->getInfo().getLongitude() << endl;
 			map.addEdge(map.getVertexSet()[i]->getInfo(), map.getVertexSet()[i + 1]->getInfo(), map.getVertexSet()[i]->getInfo().calcTimeBetween(map.getVertexSet()[i + 1]->getInfo(), SUBWAY_VEL) + SUBWAY_INSTOP);
 			map.addEdge(map.getVertexSet()[i + 1]->getInfo(), map.getVertexSet()[i]->getInfo(), map.getVertexSet()[i + 1]->getInfo().calcTimeBetween(map.getVertexSet()[i]->getInfo(), SUBWAY_VEL) + SUBWAY_INSTOP);
 		}
@@ -101,7 +98,7 @@ void NetworkMap::setConnections(){
 				stop_node2 = map.getVertexSet()[j]->getInfo().getNode();
 
 				if (stop_node1 == stop_node2){
-					map.addEdge(map.getVertexSet()[i]->getInfo(), map.getVertexSet()[j]->getInfo(), map.getVertexSet()[i]->getInfo().getWaitTime());
+					map.addEdge(map.getVertexSet()[i]->getInfo(), map.getVertexSet()[j]->getInfo(), map.getVertexSet()[i]->getInfo().getWaitTime() * 60);
 				}
 			}
 		}
@@ -187,6 +184,8 @@ void graphView( NetworkMap nm){
 			x = 100; y = 200;
 		} else if (line == " F"){
 			x = 100; y = 300;
+		} else if (line == " E"){
+			x = 000; y = 400;
 		}
 		gv->addNode(i, x + i * 20, y );
 		gv->setVertexLabel(i, nm.getMap().getVertexSet()[i]->getInfo().getName());
@@ -216,17 +215,17 @@ float NetworkMap::calcTimeBetween(const Stop &s1, const Stop &s2){
 	float time_elapsed = 0.0;
 
 	vector<Stop> path;
-	map.unweightedShortestPath(s1);
+	map.bellmanFordShortestPath(s1);
 	path = map.getPath(s1, s2);
 
 	for (unsigned int i = 0; i < path.size() - 1; i++){
-		if (path[i].calcTimeBetween(path[i+1], SUBWAY_VEL) == 0){
+		if (round(path[i].calcTimeBetween(path[i+1], SUBWAY_VEL)) == 0){
 			time_elapsed += path[i+1].getWaitTime();
-			//cout << "PARAGEM " << path[i].getName() << " TO " << path[i+1].getName() << ". TIME TO ADD: " << path[i+1].getWaitTime() << endl;
+			cout << "PARAGEM " << path[i].getName() << " TO " << path[i+1].getName() << ". TIME TO ADD: " << path[i+1].getWaitTime() << endl;
 		}
 		else{
 			time_elapsed += path[i].calcTimeBetween(path[i+1], SUBWAY_VEL) + SUBWAY_INSTOP;
-			//cout << "PARAGEM " <<  path[i].getName() << " TO " << path[i+1].getName() << ". TIME TO ADD: " << path[i].calcTimeBetween(path[i+1], SUBWAY_VEL) << endl;
+			cout << "PARAGEM " <<  path[i].getName() << " TO " << path[i+1].getName() << ". TIME TO ADD: " << path[i].calcTimeBetween(path[i+1], SUBWAY_VEL) << endl;
 		}
 	}
 
@@ -245,7 +244,7 @@ void NetworkMap::calcTimeBetweenStops(){
 
 	Vertex<Stop>* s1_v = NULL;
 
-	for (int i = 0; i < map.getVertexSet().size() ; i++){
+	for (unsigned int i = 0; i < map.getVertexSet().size() ; i++){
 		if (map.getVertexSet()[i]->getInfo().getNode() == stop1_node){
 			s1_v = map.getVertexSet()[i];
 		}
@@ -263,7 +262,7 @@ void NetworkMap::calcTimeBetweenStops(){
 
 	Stop s2(stop2_node);
 
-	for (int i = 0; i < map.getVertexSet().size() ; i++){
+	for (unsigned int i = 0; i < map.getVertexSet().size() ; i++){
 		if (map.getVertexSet()[i]->getInfo().getNode() == stop2_node){
 			s2_v = map.getVertexSet()[i];
 		}
@@ -277,4 +276,67 @@ void NetworkMap::calcTimeBetweenStops(){
 	cout << "Time between stops: " << calcTimeBetween(s1_v->getInfo(), s2_v->getInfo());
 }
 
+// Calculate number of line/transport switches
+int NetworkMap::calcNumberOfLineSwitchesBetween(const Stop &s1, const Stop &s2){
+
+	vector<string> lines;
+
+	vector<Stop> path;
+	map.bellmanFordShortestPath(s1);
+	path = map.getPath(s1, s2);
+
+	for (unsigned int i = 0; i < path.size(); i++){
+		string line, trash;
+		stringstream ss(path[i].getName());
+		getline(ss, trash, '-');
+		ss >> line;
+		if (!exists_in_vector(lines, line)) lines.push_back(line);
+	}
+
+	return lines.size() - 1;
+
+}
+
+void NetworkMap::calcSwitchesBetweenStops(){
+
+	string stop1_node, stop2_node;
+
+	cout << "Insert the first stop's code: ";
+	cin >> stop1_node;
+
+	Stop s1(stop1_node);
+
+	Vertex<Stop>* s1_v = NULL;
+
+	for (unsigned int i = 0; i < map.getVertexSet().size() ; i++){
+		if (map.getVertexSet()[i]->getInfo().getNode() == stop1_node){
+			s1_v = map.getVertexSet()[i];
+		}
+	}
+
+	if (s1_v == NULL){
+		cout << "Not found..." << endl;
+		return;
+	}
+
+	Vertex<Stop>* s2_v = NULL;
+
+	cout << "Insert the second stop's code: ";
+	cin >> stop2_node;
+
+	Stop s2(stop2_node);
+
+	for (unsigned int i = 0; i < map.getVertexSet().size() ; i++){
+		if (map.getVertexSet()[i]->getInfo().getNode() == stop2_node){
+			s2_v = map.getVertexSet()[i];
+		}
+	}
+
+	if (s2_v == NULL){
+		cout << "Not found..." << endl;
+		return;
+	}
+
+	cout << "Time between stops: " << calcNumberOfLineSwitchesBetween(s1_v->getInfo(), s2_v->getInfo());
+}
 

@@ -36,6 +36,8 @@ public:
 	void displayMap();
 	float calcTimeBetween(const Stop &s1, const Stop &s2);
 	void calcTimeBetweenStops();
+	int calcNumberOfLineSwitchesBetween(const Stop &s1, const Stop &s2);
+	void calcSwitchesBetweenStops();
 };
 
 bool exists_in_vector(vector<string> v, string s);

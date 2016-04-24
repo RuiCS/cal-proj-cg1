@@ -97,7 +97,7 @@ float timeBetween(float lat1, float lon1, float lat2, float lon2, int velocity){
 	float velocity_ms = velocity * 1000 / 3600;
 	float d = distance(lat1, lon1, lat2, lon2);
 
-	if ( round(d == 0) ){
+	if ( d == 0 ){
 		return 0.0;
 	}
 	else return d / velocity_ms;

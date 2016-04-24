@@ -13,6 +13,8 @@ int main(void) {
 	graphView(nm);
 	nm.displayMap();
 	nm.calcTimeBetweenStops();
+	cout << endl;
+	nm.calcSwitchesBetweenStops();
 
 	return 0;
 }
