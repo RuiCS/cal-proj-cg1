@@ -197,6 +197,9 @@ void graphView(){
 			int indice = findVertexInVector(nm.getMap().getVertexSet(), nm.getMap().getVertexSet()[j]->getAdj()[k].getDest());
 			if (indice != -1){
 				gv->addEdge(edgeID, j, indice, EdgeType::DIRECTED);
+				stringstream double_strg;
+				double_strg << nm.getMap().getVertexSet()[j]->getAdj()[k].getWeight();
+				gv->setEdgeLabel(edgeID, double_strg.str());
 				edgeID++;
 			}
 		}

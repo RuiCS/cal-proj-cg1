@@ -133,6 +133,7 @@ class Edge {
 public:
 	Edge(Vertex<T> *d, double w);
 	Vertex<T> * getDest();
+	double getWeight();
 	friend class Graph<T>;
 	friend class Vertex<T>;
 };
@@ -145,6 +146,10 @@ Vertex<T>* Edge<T>::getDest(){
 	return dest;
 }
 
+template <class T>
+double Edge<T>::getWeight(){
+	return weight;
+}
 
 
 /* ================================================================================================
