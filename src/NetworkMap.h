@@ -61,10 +61,6 @@ public:
 	bool loadMap(string filepath);
 
 	/**
-	 * Cria as arestas do grafo.
-	 */
-	void setConnections();
-	/**
 	 * Imprime o grafo na consola.
 	 */
 	void displayMap();
@@ -152,10 +148,6 @@ void resetEdges(float(*weightFunction)(const Stop&, const Stop&), NetworkMap& nm
 float calcPrice(int numZones);
 
 // Methods to calculate edge weight
-/**
- *
- */
-float testWeight(const Stop& s1, const Stop& s2);
 /**
  * Calcula o peso entre a paragem s1 e s2 com base no tempo a que se demora a chegar de s1 a s2.
  *

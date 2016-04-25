@@ -60,49 +60,6 @@ bool NetworkMap::loadMap(string filepath) {
 	return true;
 }
 
-void NetworkMap::setConnections(){
-
-	// pressupondo que as paragens estao por ordem no ficheiro...
-	for (unsigned int i = 0; i < map.getVertexSet().size() - 1; i++){
-
-		string stop_name1, stop_name2;
-		stop_name1 = map.getVertexSet()[i]->getInfo().getName();
-		stop_name2 = map.getVertexSet()[i + 1]->getInfo().getName();
-
-		stringstream st1(stop_name1);
-		stringstream st2(stop_name2);
-		string trash, line1, line2;
-
-		// nome - linha
-		getline(st1, trash, '-');
-		getline(st1, line1);
-		getline(st2, trash, '-');
-		getline(st2, line2);
-
-		if (line1 == line2){
-			map.addEdge(map.getVertexSet()[i]->getInfo(), map.getVertexSet()[i + 1]->getInfo(), map.getVertexSet()[i]->getInfo().calcTimeBetween(map.getVertexSet()[i + 1]->getInfo(), SUBWAY_VEL) + SUBWAY_INSTOP);
-			map.addEdge(map.getVertexSet()[i + 1]->getInfo(), map.getVertexSet()[i]->getInfo(), map.getVertexSet()[i + 1]->getInfo().calcTimeBetween(map.getVertexSet()[i]->getInfo(), SUBWAY_VEL) + SUBWAY_INSTOP);
-		}
-
-	}
-
-	// ligar paragens com o mesmo node
-	for (unsigned int i = 0; i < map.getVertexSet().size(); i++){
-		for (unsigned int j = 0; j < map.getVertexSet().size(); j++){
-			if (j == i) continue;
-			else{
-				string stop_node1, stop_node2;
-				stop_node1 = map.getVertexSet()[i]->getInfo().getNode();
-				stop_node2 = map.getVertexSet()[j]->getInfo().getNode();
-
-				if (stop_node1 == stop_node2){
-					map.addEdge(map.getVertexSet()[i]->getInfo(), map.getVertexSet()[j]->getInfo(), map.getVertexSet()[i]->getInfo().getWaitTime() * 60);
-				}
-			}
-		}
-	}
-}
-
 // Auxiliar Method
 bool exists_in_vector(vector<string> v, string s){
 	for (unsigned int i = 0; i < v.size(); i++)
@@ -151,7 +108,7 @@ void NetworkMap::displayMap(){
 
 // Auxiliary Method for graphView()
 int findVertexInVector(vector <Vertex<Stop>*> vertexSet, Vertex<Stop>* to_find){
-	for (int i = 0; i < vertexSet.size() ; i++){
+	for (unsigned int i = 0; i < vertexSet.size() ; i++){
 		if (to_find->getInfo().getName() == vertexSet[i]->getInfo().getName()){
 			return i;
 		}
@@ -211,9 +168,9 @@ void graphView( NetworkMap nm){
 					gv->setEdgeDashed(edgeID, true);
 				}
 
-				stringstream double_strg;
-				double_strg << nm.getMap().getVertexSet()[j]->getAdj()[k].getWeight();
-				gv->setEdgeLabel(edgeID, double_strg.str());
+				//stringstream double_strg;
+				//double_strg << nm.getMap().getVertexSet()[j]->getAdj()[k].getWeight();
+				//gv->setEdgeLabel(edgeID, double_strg.str());
 				edgeID++;
 			}
 		}
@@ -380,10 +337,6 @@ void resetEdges(float(*weightFunction)(const Stop&, const Stop&), NetworkMap &nm
 }
 
 // Weight Functions -----------------------------------------------------------------------------
-
-float testWeight(const Stop& s1, const Stop& s2) {
-	return 15.0;
-}
 
 float timeWeight(const Stop& s1, const Stop& s2) {
 	if (s1.getNode() == s2.getNode())
