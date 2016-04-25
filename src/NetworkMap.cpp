@@ -164,9 +164,12 @@ void graphView( NetworkMap nm){
 
 	GraphViewer *gv = new GraphViewer(600, 600, false);
 
-
 	gv->createWindow(600, 600);
 
+	float lonDiff = MAX_LON - MIN_LON;
+	float latDiff = MAX_LAT - MIN_LAT;
+
+	gv->defineVertexSize(40);
 	gv->defineEdgeColor("blue");
 	gv->defineVertexColor("yellow");
 
@@ -177,17 +180,21 @@ void graphView( NetworkMap nm){
 		string trash, line;
 		getline(liness, trash, '-');
 		getline(liness, line);
-		int x = 100, y = 0;
+		int x, y, offset;
 		if (line == " C"){
-			x = 100; y = 100;
+			offset = 100;
 		} else if (line == " D"){
-			x = 100; y = 200;
+			offset = 100;
 		} else if (line == " F"){
-			x = 100; y = 300;
+			offset = 200;
 		} else if (line == " E"){
-			x = 000; y = 400;
+			offset = 300;
 		}
-		gv->addNode(i, x + i * 20, y );
+
+		x = (int)((MAX_LON - nm.getMap().getVertexSet()[i]->getInfo().getLongitude())/(lonDiff) * WIN_WIDTH);
+		y = (int)((MAX_LAT - nm.getMap().getVertexSet()[i]->getInfo().getLatitude())/(latDiff) * WIN_HEIGHT);
+
+		gv->addNode(i, x - 500, y + offset - 500);
 		gv->setVertexLabel(i, nm.getMap().getVertexSet()[i]->getInfo().getName());
 	}
 
@@ -197,6 +204,11 @@ void graphView( NetworkMap nm){
 			int indice = findVertexInVector(nm.getMap().getVertexSet(), nm.getMap().getVertexSet()[j]->getAdj()[k].getDest());
 			if (indice != -1){
 				gv->addEdge(edgeID, j, indice, EdgeType::DIRECTED);
+
+				if (nm.getMap().getVertexSet()[j]->getInfo().getNode() == nm.getMap().getVertexSet()[indice]->getInfo().getNode()) {
+					gv->setEdgeDashed(edgeID, true);
+				}
+
 				stringstream double_strg;
 				double_strg << nm.getMap().getVertexSet()[j]->getAdj()[k].getWeight();
 				gv->setEdgeLabel(edgeID, double_strg.str());
@@ -388,4 +400,3 @@ void NetworkMap::calcSwitchesBetweenStops(){
 	cout << "Number of switches: " << switches << endl;
 	cout << endl;
 }
-
