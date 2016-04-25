@@ -51,5 +51,11 @@ public:
 bool exists_in_vector(vector<string> v, string s);
 void graphView(NetworkMap nm);
 int findVertexInVector(vector <Vertex<Stop>*> vertexSet, Vertex<Stop>* to_find);
+void resetEdges(float(*weightFunction)(const Stop&, const Stop&), NetworkMap& nm);
+
+// Methods to calculate edge weight
+float testWeight(const Stop& s1, const Stop& s2);
+float timeWeight(const Stop& s1, const Stop& s2);
+float priceWeight(const Stop& s1, const Stop& s2);
 
 #endif /* SRC_NETWORKMAP_H_ */

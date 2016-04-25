@@ -49,7 +49,7 @@ public:
 	//Methods
 	float calcDistance(Stop s);
 	float calcDistance(float lat, float lon);
-	float calcTimeBetween(Stop s, int velocity);
+	float calcTimeBetween(const Stop& s, int velocity) const;
 	float calcTimeBetween(float lat, float lon, int velocity);
 
 	//Operator Overloading

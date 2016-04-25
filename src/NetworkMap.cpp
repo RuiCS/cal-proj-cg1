@@ -402,3 +402,70 @@ void NetworkMap::calcSwitchesBetweenStops(){
 	cout << "Number of switches: " << switches << endl;
 	cout << endl;
 }
+
+
+void resetEdges(float(*weightFunction)(const Stop&, const Stop&), NetworkMap &nm) {
+	for (unsigned int i = 0; i < nm.getMap().getVertexSet().size(); i++) {
+		for (unsigned int j = 0; j < nm.getMap().getVertexSet().size(); j++) {
+			if (i == j) continue;
+			nm.getMap().removeEdge(nm.getMap().getVertexSet()[i]->getInfo(), nm.getMap().getVertexSet()[j]->getInfo());
+		}
+	}
+
+	// pressupondo que as paragens estao por ordem no ficheiro...
+	for (unsigned int i = 0; i < nm.getMap().getVertexSet().size() - 1; i++){
+
+		string stop_name1, stop_name2;
+		stop_name1 = nm.getMap().getVertexSet()[i]->getInfo().getName();
+		stop_name2 = nm.getMap().getVertexSet()[i + 1]->getInfo().getName();
+
+		stringstream st1(stop_name1);
+		stringstream st2(stop_name2);
+		string trash, line1, line2;
+
+		// nome - linha
+		getline(st1, trash, '-');
+		getline(st1, line1);
+		getline(st2, trash, '-');
+		getline(st2, line2);
+
+		if (line1 == line2){
+			nm.getMap().addEdge(nm.getMap().getVertexSet()[i]->getInfo(), nm.getMap().getVertexSet()[i + 1]->getInfo(), (*weightFunction)(nm.getMap().getVertexSet()[i]->getInfo(), nm.getMap().getVertexSet()[i + 1]->getInfo()));
+			nm.getMap().addEdge(nm.getMap().getVertexSet()[i + 1]->getInfo(), nm.getMap().getVertexSet()[i]->getInfo(), (*weightFunction)(nm.getMap().getVertexSet()[i]->getInfo(), nm.getMap().getVertexSet()[i + 1]->getInfo()));
+		}
+
+	}
+
+	// ligar paragens com o mesmo node
+	for (unsigned int i = 0; i < nm.getMap().getVertexSet().size(); i++){
+		for (unsigned int j = 0; j < nm.getMap().getVertexSet().size(); j++){
+			if (j == i) continue;
+			else{
+				string stop_node1, stop_node2;
+				stop_node1 = nm.getMap().getVertexSet()[i]->getInfo().getNode();
+				stop_node2 = nm.getMap().getVertexSet()[j]->getInfo().getNode();
+
+				if (stop_node1 == stop_node2){
+					nm.getMap().addEdge(nm.getMap().getVertexSet()[i]->getInfo(), nm.getMap().getVertexSet()[j]->getInfo(), (*weightFunction)(nm.getMap().getVertexSet()[i]->getInfo(), nm.getMap().getVertexSet()[j]->getInfo()));
+				}
+			}
+		}
+	}
+}
+
+float testWeight(const Stop& s1, const Stop& s2) {
+	return 15.0;
+}
+
+float timeWeight(const Stop& s1, const Stop& s2) {
+	if (s1.getNode() == s2.getNode())
+		return s1.getWaitTime() * 60;
+
+	return s1.calcTimeBetween(s2, SUBWAY_VEL) + SUBWAY_INSTOP;
+}
+
+float priceWeight(const Stop& s1, const Stop& s2) {
+	if (s1.getZone() == s2.getZone())
+		return 0;
+	return 1;
+}

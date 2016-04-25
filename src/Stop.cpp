@@ -114,7 +114,7 @@ float Stop::calcDistance(float lat, float lon){
 	return distance(coords[LAT], coords[LON], lat, lon);
 }
 
-float Stop::calcTimeBetween(Stop s, int velocity){
+float Stop::calcTimeBetween(const Stop& s, int velocity) const {
 	return timeBetween(coords[LAT], coords[LON], s.getLatitude(), s.getLongitude(), velocity);
 }
 

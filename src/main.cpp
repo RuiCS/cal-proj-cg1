@@ -5,6 +5,10 @@
 
 using namespace std;
 
+float test() {
+	return 2.4;
+}
+
 void runInterface(){
 
 	int option;
@@ -20,7 +24,7 @@ void runInterface(){
 	case 1: {
 		nm = NetworkMap();
 		nm.loadMap("input.txt");
-		nm.setConnections();
+		resetEdges(&priceWeight, nm);
 		break;
 	}
 	case 2: exit(0); break;
