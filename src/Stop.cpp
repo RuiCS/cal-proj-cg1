@@ -133,5 +133,5 @@ void Stop::operator<< (ostream &o){
 }
 
 bool operator!= (const Stop& s1, const Stop &s2) {
-	return s1.name != s2.name;
+	return s1.node != s2.node;
 }

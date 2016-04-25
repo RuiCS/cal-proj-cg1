@@ -510,13 +510,15 @@ vector<T> Graph<T>::getPath(const T &origin, const T &dest){
 		v = v->path;
 		buffer.push_front(v->info);
 	}
-	if( v->path != NULL )
+	if( v->path != NULL ){
 		buffer.push_front(v->path->info);
+	}
 
 
 	vector<T> res;
 	while( !buffer.empty() ) {
 		res.push_back( buffer.front() );
+		cout << "APASD : " << buffer.front().getNode() << endl;
 		buffer.pop_front();
 	}
 	return res;

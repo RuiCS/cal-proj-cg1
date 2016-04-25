@@ -132,7 +132,9 @@ void NetworkMap::displayMap(){
 		output += " stop(s): \n";
 
 		for (unsigned int j = 0; j < map.getVertexSet()[i]->getAdj().size(); j++){
-			output += map.getVertexSet()[i]->getAdj()[j].getDest()->getInfo().getName() + "\n";
+			stringstream double_strg;
+			double_strg << map.getVertexSet()[i]->getAdj()[j].getWeight();
+			output += map.getVertexSet()[i]->getAdj()[j].getDest()->getInfo().getName() + ", " + double_strg.str() + "\n";
 		}
 
 		output += "\n";
@@ -208,6 +210,7 @@ void graphView( NetworkMap nm){
 	gv->rearrange();
 }
 
+
 float NetworkMap::calcTimeBetween(const Stop &s1, const Stop &s2, int velocity, int timeInStops, vector<Stop> &stops){
 
 	float time_elapsed = 0.0;
@@ -219,12 +222,12 @@ float NetworkMap::calcTimeBetween(const Stop &s1, const Stop &s2, int velocity, 
 
 	for (unsigned int i = 0; i < path.size() - 1; i++){
 		if (round(path[i].calcTimeBetween(path[i+1], velocity)) == 0){
-			time_elapsed += path[i+1].getWaitTime();
-			//cout << "PARAGEM " << path[i].getName() << " TO " << path[i+1].getName() << ". TIME TO ADD: " << path[i+1].getWaitTime() << endl;
+			time_elapsed += path[i+1].getWaitTime() * 60;
+			cout << "PARAGEM " << path[i].getName() << " TO " << path[i+1].getName() << ". TIME TO ADD: " << path[i+1].getWaitTime() *60 << endl;
 		}
 		else{
 			time_elapsed += path[i].calcTimeBetween(path[i+1], velocity) + timeInStops;
-			//cout << "PARAGEM " <<  path[i].getName() << " TO " << path[i+1].getName() << ". TIME TO ADD: " << path[i].calcTimeBetween(path[i+1], SUBWAY_VEL) << endl;
+			cout << "PARAGEM " <<  path[i].getName() << " TO " << path[i+1].getName() << ". TIME TO ADD: " << path[i].calcTimeBetween(path[i+1], SUBWAY_VEL) << endl;
 		}
 	}
 
@@ -239,41 +242,46 @@ void NetworkMap::calcTimeBetweenStops(){
 	cout << "Insert the first stop's code: ";
 	cin >> stop1_node;
 
-	Stop s1(stop1_node);
-
-	Vertex<Stop>* s1_v = NULL;
-
+	vector<Vertex<Stop>*> stops1, stops2;
 	for (unsigned int i = 0; i < map.getVertexSet().size() ; i++){
 		if (map.getVertexSet()[i]->getInfo().getNode() == stop1_node){
-			s1_v = map.getVertexSet()[i];
+			stops1.push_back(map.getVertexSet()[i]);
 		}
 	}
 
-	if (s1_v == NULL){
+	if (stops1.size() == 0){
 		cout << "Not found..." << endl;
 		return;
 	}
-
-	Vertex<Stop>* s2_v = NULL;
 
 	cout << "Insert the second stop's code: ";
 	cin >> stop2_node;
 
-	Stop s2(stop2_node);
-
 	for (unsigned int i = 0; i < map.getVertexSet().size() ; i++){
 		if (map.getVertexSet()[i]->getInfo().getNode() == stop2_node){
-			s2_v = map.getVertexSet()[i];
+			stops2.push_back(map.getVertexSet()[i]);
 		}
 	}
 
-	if (s2_v == NULL){
+	if (stops2.size() == 0){
 		cout << "Not found..." << endl;
 		return;
 	}
+
 	cout << endl;
+
 	vector<Stop> stops;
-	float time =  calcTimeBetween(s1_v->getInfo(), s2_v->getInfo(), SUBWAY_VEL, SUBWAY_INSTOP, stops);
+	float time = 999999999;
+	for (unsigned int i = 0; i < stops1.size(); i++){
+		for (unsigned int j = 0; j < stops2.size(); j++){
+			vector <Stop> temp_vector;
+			float temp = calcTimeBetween(stops1[i]->getInfo(), stops2[j]->getInfo(), SUBWAY_VEL, SUBWAY_INSTOP, temp_vector);
+			if (temp < time){
+				time = temp;
+				stops = temp_vector;
+			}
+		}
+	}
 
 	cout << "Itinerary: " << endl;
 
@@ -287,7 +295,7 @@ void NetworkMap::calcTimeBetweenStops(){
 		time_minutes = round((time / 3600) / 60);
 		cout << "Time between stops: " << time_hours << " hours, " << time_minutes << " minutes." << endl;
 	}
-	else if (time >= 60){
+	else{
 		int time_minutes = round(time / 60);
 		cout << "Time between stops: " << time_minutes << " minutes." << endl;
 	}
@@ -331,39 +339,45 @@ void NetworkMap::calcSwitchesBetweenStops(){
 
 	Stop s1(stop1_node);
 
-	Vertex<Stop>* s1_v = NULL;
-
+	vector<Vertex<Stop>*> stops1, stops2;
 	for (unsigned int i = 0; i < map.getVertexSet().size() ; i++){
 		if (map.getVertexSet()[i]->getInfo().getNode() == stop1_node){
-			s1_v = map.getVertexSet()[i];
+			stops1.push_back(map.getVertexSet()[i]);
 		}
 	}
 
-	if (s1_v == NULL){
+	if (stops1.size() == 0){
 		cout << "Not found..." << endl;
 		return;
 	}
-
-	Vertex<Stop>* s2_v = NULL;
 
 	cout << "Insert the second stop's code: ";
 	cin >> stop2_node;
 
-	Stop s2(stop2_node);
-
 	for (unsigned int i = 0; i < map.getVertexSet().size() ; i++){
 		if (map.getVertexSet()[i]->getInfo().getNode() == stop2_node){
-			s2_v = map.getVertexSet()[i];
+			stops2.push_back(map.getVertexSet()[i]);
 		}
 	}
 
-	if (s2_v == NULL){
+	if (stops2.size() == 0){
 		cout << "Not found..." << endl;
 		return;
 	}
+
 	cout << endl;
 	vector<Stop> stops;
-	int switches = calcNumberOfLineSwitchesBetween(s1_v->getInfo(), s2_v->getInfo(), stops);
+	int switches = 999999999;
+	for (unsigned int i = 0; i < stops1.size(); i++){
+		for (unsigned int j = 0; j < stops2.size(); j++){
+			vector <Stop> temp_vector;
+			int temp = calcNumberOfLineSwitchesBetween(stops1[i]->getInfo(), stops2[j]->getInfo(), temp_vector);
+			if (temp < switches){
+				switches = temp;
+				stops = temp_vector;
+			}
+		}
+	}
 
 	cout << "Itinerary: " << endl;
 
