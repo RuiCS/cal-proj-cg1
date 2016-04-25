@@ -42,13 +42,9 @@ public:
 	bool loadMap(string filepath);
 	void setConnections();
 	void displayMap();
-	float calcTimeBetween(const Stop &s1, const Stop &s2, int velocity, int timeInStops, vector<Stop> &stops);
-	void calcTimeBetweenStops();
-	int calcNumberOfLineSwitchesBetween(const Stop &s1, const Stop &s2, vector<Stop> &stops);
-	void calcSwitchesBetweenStops();
 
 	float pathWeight(const Stop& s1, const Stop &s2);
-	vector<Stop> findLightestPath(string s1, string s2);
+	vector<Stop> findLightestPath(string s1, string s2, float& weight);
 	void findFastestPath(string s1, string s2);
 	void findCheapestPath(string s1, string s2);
 	void findShortestPath(string s1, string s2);
@@ -59,6 +55,7 @@ bool exists_in_vector(vector<string> v, string s);
 void graphView(NetworkMap nm);
 int findVertexInVector(vector <Vertex<Stop>*> vertexSet, Vertex<Stop>* to_find);
 void resetEdges(float(*weightFunction)(const Stop&, const Stop&), NetworkMap& nm);
+float calcPrice(int numZones);
 
 // Methods to calculate edge weight
 float testWeight(const Stop& s1, const Stop& s2);

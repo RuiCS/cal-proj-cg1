@@ -224,185 +224,6 @@ void graphView( NetworkMap nm){
 	gv->rearrange();
 }
 
-
-float NetworkMap::calcTimeBetween(const Stop &s1, const Stop &s2, int velocity, int timeInStops, vector<Stop> &stops){
-
-	float time_elapsed = 0.0;
-
-	vector<Stop> path;
-	map.bellmanFordShortestPath(s1);
-	path = map.getPath(s1, s2);
-	stops = path;
-
-	for (unsigned int i = 0; i < path.size() - 1; i++){
-		if (round(path[i].calcTimeBetween(path[i+1], velocity)) == 0){
-			time_elapsed += path[i+1].getWaitTime() * 60;
-			cout << "PARAGEM " << path[i].getName() << " TO " << path[i+1].getName() << ". TIME TO ADD: " << path[i+1].getWaitTime() *60 << endl;
-		}
-		else{
-			time_elapsed += path[i].calcTimeBetween(path[i+1], velocity) + timeInStops;
-			cout << "PARAGEM " <<  path[i].getName() << " TO " << path[i+1].getName() << ". TIME TO ADD: " << path[i].calcTimeBetween(path[i+1], SUBWAY_VEL) << endl;
-		}
-	}
-
-	return time_elapsed;
-
-}
-
-void NetworkMap::calcTimeBetweenStops(){
-
-	string stop1_node, stop2_node;
-
-	cout << "Insert the first stop's code: ";
-	cin >> stop1_node;
-
-	vector<Vertex<Stop>*> stops1, stops2;
-	for (unsigned int i = 0; i < map.getVertexSet().size() ; i++){
-		if (map.getVertexSet()[i]->getInfo().getNode() == stop1_node){
-			stops1.push_back(map.getVertexSet()[i]);
-		}
-	}
-
-	if (stops1.size() == 0){
-		cout << "Not found..." << endl;
-		return;
-	}
-
-	cout << "Insert the second stop's code: ";
-	cin >> stop2_node;
-
-	for (unsigned int i = 0; i < map.getVertexSet().size() ; i++){
-		if (map.getVertexSet()[i]->getInfo().getNode() == stop2_node){
-			stops2.push_back(map.getVertexSet()[i]);
-		}
-	}
-
-	if (stops2.size() == 0){
-		cout << "Not found..." << endl;
-		return;
-	}
-
-	cout << endl;
-
-	vector<Stop> stops;
-	float time = 999999999;
-	for (unsigned int i = 0; i < stops1.size(); i++){
-		for (unsigned int j = 0; j < stops2.size(); j++){
-			vector <Stop> temp_vector;
-			float temp = calcTimeBetween(stops1[i]->getInfo(), stops2[j]->getInfo(), SUBWAY_VEL, SUBWAY_INSTOP, temp_vector);
-			if (temp < time){
-				time = temp;
-				stops = temp_vector;
-			}
-		}
-	}
-
-	cout << "Itinerary: " << endl;
-
-	for (unsigned int i = 0; i < stops.size(); i++){
-		cout << stops[i].getName() << endl;
-	}
-
-	if (time >= 3600){
-		int time_hours, time_minutes;
-		time_hours = time / 3600;
-		time_minutes = round((time / 3600) / 60);
-		cout << "Time between stops: " << time_hours << " hours, " << time_minutes << " minutes." << endl;
-	}
-	else{
-		int time_minutes = round(time / 60);
-		cout << "Time between stops: " << time_minutes << " minutes." << endl;
-	}
-
-	cout << endl;
-}
-
-// Calculate number of line/transport switches
-int NetworkMap::calcNumberOfLineSwitchesBetween(const Stop &s1, const Stop &s2, vector<Stop> &stops){
-
-	vector<string> lines;
-
-	vector<Stop> path;
-	map.bellmanFordShortestPath(s1);
-	path = map.getPath(s1, s2);
-	stops = path;
-
-	for (unsigned int i = 0; i < path.size(); i++){
-		string line, name, trash;
-		stringstream ss(path[i].getName());
-		getline(ss, name, '-');
-		ss >> line;
-		if (!exists_in_vector(lines, line)){
-			if (lines.size() != 0){
-				cout << "Switch from line " << lines[lines.size()-1] << " to line " << line << " at " << name << endl;
-			}
-			lines.push_back(line);
-		}
-	}
-
-	return lines.size() - 1;
-
-}
-
-void NetworkMap::calcSwitchesBetweenStops(){
-
-	string stop1_node, stop2_node;
-
-	cout << "Insert the first stop's code: ";
-	cin >> stop1_node;
-
-	Stop s1(stop1_node);
-
-	vector<Vertex<Stop>*> stops1, stops2;
-	for (unsigned int i = 0; i < map.getVertexSet().size() ; i++){
-		if (map.getVertexSet()[i]->getInfo().getNode() == stop1_node){
-			stops1.push_back(map.getVertexSet()[i]);
-		}
-	}
-
-	if (stops1.size() == 0){
-		cout << "Not found..." << endl;
-		return;
-	}
-
-	cout << "Insert the second stop's code: ";
-	cin >> stop2_node;
-
-	for (unsigned int i = 0; i < map.getVertexSet().size() ; i++){
-		if (map.getVertexSet()[i]->getInfo().getNode() == stop2_node){
-			stops2.push_back(map.getVertexSet()[i]);
-		}
-	}
-
-	if (stops2.size() == 0){
-		cout << "Not found..." << endl;
-		return;
-	}
-
-	cout << endl;
-	vector<Stop> stops;
-	int switches = 999999999;
-	for (unsigned int i = 0; i < stops1.size(); i++){
-		for (unsigned int j = 0; j < stops2.size(); j++){
-			vector <Stop> temp_vector;
-			int temp = calcNumberOfLineSwitchesBetween(stops1[i]->getInfo(), stops2[j]->getInfo(), temp_vector);
-			if (temp < switches){
-				switches = temp;
-				stops = temp_vector;
-			}
-		}
-	}
-
-	cout << "Itinerary: " << endl;
-
-	for (unsigned int i = 0; i < stops.size(); i++){
-		cout << stops[i].getName() << endl;
-	}
-
-	cout << "Number of switches: " << switches << endl;
-	cout << endl;
-}
-
 // Finds the weight of a path
 float NetworkMap::pathWeight(const Stop& s1, const Stop& s2) {
 	float weight = 0;
@@ -421,7 +242,7 @@ float NetworkMap::pathWeight(const Stop& s1, const Stop& s2) {
 	return weight;
 }
 
-vector<Stop> NetworkMap::findLightestPath(string s1, string s2) {
+vector<Stop> NetworkMap::findLightestPath(string s1, string s2, float &weight) {
 	vector<Stop> beginStops, endStops;
 	vector<vector<Stop> > paths;
 	float lightestPathWeight = 999999.0;
@@ -434,6 +255,13 @@ vector<Stop> NetworkMap::findLightestPath(string s1, string s2) {
 			endStops.push_back(map.getVertexSet()[i]->getInfo());
 	}
 
+	if (beginStops.size() == 0 || endStops.size() == 0) {
+		cout << "ERRO : Pelo menos uma das paragens não existe! " << endl << endl;
+		vector<Stop> err;
+		return err;
+	}
+
+
 	for (unsigned int j = 0; j < beginStops.size(); j++) {
 		map.dijkstraShortestPath(beginStops[j]);
 		for (unsigned int k = 0; k < endStops.size(); k++) {
@@ -445,43 +273,60 @@ vector<Stop> NetworkMap::findLightestPath(string s1, string s2) {
 		}
 	}
 
+	weight = lightestPathWeight;
 	return paths[lightestPathIndex];
 }
 
 void NetworkMap::findFastestPath(string s1, string s2) {
+	float weight = 0;
 	resetEdges(&timeWeight, *this);
-	vector<Stop> path = findLightestPath(s1, s2);
+	vector<Stop> path = findLightestPath(s1, s2, weight);
 
+	if (path.size() == 0) return;
+	cout << endl << "ITINERARIO A PERCORRER:" << endl;
 	for (unsigned int i = 0; i < path.size(); i++) {
 		cout << path[i].getName() << endl;
 	}
+	cout << "TEMPO DE VIAGEM: " << weight / 60 << " min " << endl << endl;
 }
 
 void NetworkMap::findCheapestPath(string s1, string s2) {
+	float weight = 0;
 	resetEdges(&priceWeight, *this);
-	vector<Stop> path = findLightestPath(s1, s2);
+	vector<Stop> path = findLightestPath(s1, s2, weight);
 
+	if (path.size() == 0) return;
+	cout << endl << "ITINERARIO A PERCORRER:" << endl;
 	for (unsigned int i = 0; i < path.size(); i++) {
 		cout << path[i].getName() << endl;
 	}
+	cout << "PRECO DA VIAGEM: " << calcPrice((int)weight) << "eur ( " << weight  << " ZONA(S) )" << endl << endl;
 }
 
 void NetworkMap::findShortestPath(string s1, string s2) {
+	float weight = 0;
 	resetEdges(&distanceWeight, *this);
-	vector<Stop> path = findLightestPath(s1, s2);
+	vector<Stop> path = findLightestPath(s1, s2, weight);
 
+	if (path.size() == 0) return;
+	cout << endl << "ITINERARIO A PERCORRER:" << endl;
 	for (unsigned int i = 0; i < path.size(); i++) {
 		cout << path[i].getName() << endl;
 	}
+	cout << "DISTANCA PERCORRIDA: " << weight/1000 << " km" << endl << endl;
 }
 
 void NetworkMap::findLeastLineSwitchesPath(string s1, string s2) {
+	float weight = 0;
 	resetEdges(&lineSwitchWeight, *this);
-	vector<Stop> path = findLightestPath(s1, s2);
+	vector<Stop> path = findLightestPath(s1, s2, weight);
 
+	if (path.size() == 0) return;
+	cout << endl << "ITINERARIO A PERCORRER:" << endl;
 	for (unsigned int i = 0; i < path.size(); i++) {
 		cout << path[i].getName() << endl;
 	}
+	cout << "NUMERO DE TRANSBORDOS: " << weight << endl << endl;
 }
 
 // Resets the edges and recalculates the edge weight according to a weight function
@@ -561,4 +406,42 @@ float lineSwitchWeight(const Stop& s1, const Stop &s2) {
 	if (s1.getLine() == s2.getLine())
 		return 0;
 	return 1;
+}
+
+// Auxiliary function
+float calcPrice(int numZones) {
+	float price = 1.20;
+	switch(numZones) {
+	case 3:
+		price = 1.50;
+		break;
+	case 4:
+		price = 1.85;
+		break;
+	case 5:
+		price = 2.30;
+		break;
+	case 6:
+		price = 2.70;
+		break;
+	case 7:
+		price = 3.05;
+		break;
+	case 8:
+		price = 3.45;
+		break;
+	case 9:
+		price = 3.80;
+		break;
+	case 10:
+		price = 4.20;
+		break;
+	case 11:
+		price = 4.60;
+		break;
+	case 12:
+		price = 5.00;
+		break;
+	}
+	return price;
 }
