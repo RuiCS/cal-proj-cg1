@@ -18,8 +18,8 @@ using namespace std;
 
 #define MIN_LAT 41.14
 #define MAX_LAT 41.20
-#define MIN_LON -8.70
-#define MAX_LON -8.56
+#define MIN_LON -8.56
+#define MAX_LON -8.70
 
 #define WIN_WIDTH 3000
 #define WIN_HEIGHT 3000
