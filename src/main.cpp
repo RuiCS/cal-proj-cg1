@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <iomanip>
+#include <string>
 
 using namespace std;
 
@@ -12,6 +13,7 @@ float test() {
 void runInterface(){
 
 	int option;
+	string s1, s2;
 
 	cout << "Welcome." << endl;
 
@@ -24,13 +26,12 @@ void runInterface(){
 	case 1: {
 		nm = NetworkMap();
 		nm.loadMap("input.txt");
-		resetEdges(&priceWeight, nm);
+		resetEdges(&distanceWeight, nm);
 		break;
 	}
 	case 2: exit(0); break;
 	default: exit(1); break;
 	}
-
 
 	while (true){
 		cout << "1 - Display Graph with GraphViewer" << endl;
@@ -42,7 +43,10 @@ void runInterface(){
 		switch(option){
 		case 1:	graphView(nm); break;
 		case 2: nm.displayMap(); break;
-		case 3: nm.calcTimeBetweenStops(); break;
+		case 3:
+			cout << "stop1 stop2 ? "; cin >> s1 >> s2;
+			nm.findFastestPath(s1, s2);
+			break;
 		case 4: nm.calcSwitchesBetweenStops(); break;
 		case 5: exit(0); break;
 		default: exit(1); break;

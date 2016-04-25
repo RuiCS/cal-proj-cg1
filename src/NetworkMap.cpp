@@ -403,7 +403,88 @@ void NetworkMap::calcSwitchesBetweenStops(){
 	cout << endl;
 }
 
+// Finds the weight of a path
+float NetworkMap::pathWeight(const Stop& s1, const Stop& s2) {
+	float weight = 0;
+	vector<Stop> path = map.getPath(s1, s2);
+	for (unsigned int i = 0; i < path.size() - 1; i++) {
+		int index = -1;
+		for (unsigned int j = 0; j < map.getVertexSet().size(); j++) {
+			if (map.getVertexSet()[j]->getInfo().getName() == path[i].getName())
+				index = j;
+		}
+		for (unsigned int k = 0; k < map.getVertexSet()[index]->getAdj().size(); k++) {
+			if (map.getVertexSet()[index]->getAdj()[k].getDest()->getInfo().getName() == path[i+1].getName())
+				weight += map.getVertexSet()[index]->getAdj()[k].getWeight();
+		}
+	}
+	return weight;
+}
 
+vector<Stop> NetworkMap::findLightestPath(string s1, string s2) {
+	vector<Stop> beginStops, endStops;
+	vector<vector<Stop> > paths;
+	float lightestPathWeight = 999999.0;
+	int lightestPathIndex = -1;
+
+	for (unsigned int i = 0; i < map.getVertexSet().size(); i++) {
+		if (map.getVertexSet()[i]->getInfo().getNode() == s1)
+			beginStops.push_back(map.getVertexSet()[i]->getInfo());
+		if (map.getVertexSet()[i]->getInfo().getNode() == s2)
+			endStops.push_back(map.getVertexSet()[i]->getInfo());
+	}
+
+	for (unsigned int j = 0; j < beginStops.size(); j++) {
+		map.dijkstraShortestPath(beginStops[j]);
+		for (unsigned int k = 0; k < endStops.size(); k++) {
+			paths.push_back(map.getPath(beginStops[j], endStops[k]));
+			if (pathWeight(beginStops[j], endStops[k]) < lightestPathWeight) {
+				lightestPathWeight = pathWeight(beginStops[j], endStops[k]);
+				lightestPathIndex = paths.size() - 1;
+			}
+		}
+	}
+
+	return paths[lightestPathIndex];
+}
+
+void NetworkMap::findFastestPath(string s1, string s2) {
+	resetEdges(&timeWeight, *this);
+	vector<Stop> path = findLightestPath(s1, s2);
+
+	for (unsigned int i = 0; i < path.size(); i++) {
+		cout << path[i].getName() << endl;
+	}
+}
+
+void NetworkMap::findCheapestPath(string s1, string s2) {
+	resetEdges(&priceWeight, *this);
+	vector<Stop> path = findLightestPath(s1, s2);
+
+	for (unsigned int i = 0; i < path.size(); i++) {
+		cout << path[i].getName() << endl;
+	}
+}
+
+void NetworkMap::findShortestPath(string s1, string s2) {
+	resetEdges(&distanceWeight, *this);
+	vector<Stop> path = findLightestPath(s1, s2);
+
+	for (unsigned int i = 0; i < path.size(); i++) {
+		cout << path[i].getName() << endl;
+	}
+}
+
+void NetworkMap::findLeastLineSwitchesPath(string s1, string s2) {
+	resetEdges(&lineSwitchWeight, *this);
+	vector<Stop> path = findLightestPath(s1, s2);
+
+	for (unsigned int i = 0; i < path.size(); i++) {
+		cout << path[i].getName() << endl;
+	}
+}
+
+// Resets the edges and recalculates the edge weight according to a weight function
 void resetEdges(float(*weightFunction)(const Stop&, const Stop&), NetworkMap &nm) {
 	for (unsigned int i = 0; i < nm.getMap().getVertexSet().size(); i++) {
 		for (unsigned int j = 0; j < nm.getMap().getVertexSet().size(); j++) {
@@ -453,6 +534,8 @@ void resetEdges(float(*weightFunction)(const Stop&, const Stop&), NetworkMap &nm
 	}
 }
 
+// Weight Functions -----------------------------------------------------------------------------
+
 float testWeight(const Stop& s1, const Stop& s2) {
 	return 15.0;
 }
@@ -466,6 +549,16 @@ float timeWeight(const Stop& s1, const Stop& s2) {
 
 float priceWeight(const Stop& s1, const Stop& s2) {
 	if (s1.getZone() == s2.getZone())
+		return 0;
+	return 1;
+}
+
+float distanceWeight(const Stop& s1, const Stop &s2) {
+	return s1.calcDistance(s2);
+}
+
+float lineSwitchWeight(const Stop& s1, const Stop &s2) {
+	if (s1.getLine() == s2.getLine())
 		return 0;
 	return 1;
 }

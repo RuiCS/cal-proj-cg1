@@ -46,6 +46,13 @@ public:
 	void calcTimeBetweenStops();
 	int calcNumberOfLineSwitchesBetween(const Stop &s1, const Stop &s2, vector<Stop> &stops);
 	void calcSwitchesBetweenStops();
+
+	float pathWeight(const Stop& s1, const Stop &s2);
+	vector<Stop> findLightestPath(string s1, string s2);
+	void findFastestPath(string s1, string s2);
+	void findCheapestPath(string s1, string s2);
+	void findShortestPath(string s1, string s2);
+	void findLeastLineSwitchesPath(string s1, string s2);
 };
 
 bool exists_in_vector(vector<string> v, string s);
@@ -57,5 +64,7 @@ void resetEdges(float(*weightFunction)(const Stop&, const Stop&), NetworkMap& nm
 float testWeight(const Stop& s1, const Stop& s2);
 float timeWeight(const Stop& s1, const Stop& s2);
 float priceWeight(const Stop& s1, const Stop& s2);
+float distanceWeight(const Stop& s1, const Stop& s2);
+float lineSwitchWeight(const Stop&s1, const Stop& s2);
 
 #endif /* SRC_NETWORKMAP_H_ */

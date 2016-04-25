@@ -10,6 +10,7 @@
 
 #include <string>
 #include <cmath>
+#include <sstream>
 
 using namespace std;
 
@@ -36,6 +37,7 @@ public:
 	string getNode() const;
 	string getZone() const;
 	int getWaitTime() const;
+	string getLine() const;
 
 	//Setters
 	void setName(string n);
@@ -47,7 +49,7 @@ public:
 	void setWaitTime(int waitTime);
 
 	//Methods
-	float calcDistance(Stop s);
+	float calcDistance(Stop s) const;
 	float calcDistance(float lat, float lon);
 	float calcTimeBetween(const Stop& s, int velocity) const;
 	float calcTimeBetween(float lat, float lon, int velocity);

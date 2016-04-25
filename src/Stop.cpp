@@ -36,6 +36,14 @@ int Stop::getWaitTime() const{
 	return wait_time;
 }
 
+string Stop::getLine() const {
+	stringstream ss(name);
+	string trash, line;
+	getline(ss, trash, '-');
+	getline(ss, line);
+	return line;
+}
+
 // Setters ----------------------------------------------------------------------
 
 void Stop::setName(string n) {
@@ -106,7 +114,7 @@ float timeBetween(float lat1, float lon1, float lat2, float lon2, int velocity){
 
 // Methods ---------------------------------------------------------------------------
 
-float Stop::calcDistance(Stop s){
+float Stop::calcDistance(Stop s) const {
 	return distance(coords[LAT], coords[LON], s.getLatitude(), s.getLongitude());
 }
 

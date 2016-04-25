@@ -518,7 +518,7 @@ vector<T> Graph<T>::getPath(const T &origin, const T &dest){
 	vector<T> res;
 	while( !buffer.empty() ) {
 		res.push_back( buffer.front() );
-		cout << "APASD : " << buffer.front().getNode() << endl;
+		//cout << "APASD : " << buffer.front().getNode() << endl;
 		buffer.pop_front();
 	}
 	return res;
