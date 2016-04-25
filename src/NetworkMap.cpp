@@ -195,7 +195,9 @@ void graphView( NetworkMap nm){
 		y = (int)((MAX_LAT - nm.getMap().getVertexSet()[i]->getInfo().getLatitude())/(latDiff) * WIN_HEIGHT);
 
 		gv->addNode(i, x - 500, y + offset - 500);
-		gv->setVertexLabel(i, nm.getMap().getVertexSet()[i]->getInfo().getName());
+		stringstream lbl;
+		lbl << "(" << nm.getMap().getVertexSet()[i]->getInfo().getNode() << ") " << nm.getMap().getVertexSet()[i]->getInfo().getName();
+		gv->setVertexLabel(i, lbl.str());
 	}
 
 	for (unsigned int j = 0; j < nm.getMap().getVertexSet().size(); j++){
