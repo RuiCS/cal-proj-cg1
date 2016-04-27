@@ -37,6 +37,9 @@ class Vertex {
 	bool processing;
 	int indegree;
 	double dist;
+	Vertex<T>* parent;
+	int low;
+	int num;
 public:
 
 	Vertex(T in);
@@ -160,6 +163,7 @@ template <class T>
 class Graph {
 	vector<Vertex<T> *> vertexSet;
 	void dfs(Vertex<T> *v, vector<T> &res) const;
+	void findArt(Vertex<T> *v, vector<T> &res, int &counter) const;
 
 	//exercicio 5
 	int numCycles;
@@ -177,6 +181,7 @@ public:
 	bool removeVertex(const T &in);
 	bool removeEdge(const T &sourc, const T &dest);
 	vector<T> dfs() const;
+	vector<T> findArt() const;
 	vector<T> bfs(Vertex<T> *v) const;
 	int maxNewChildren(Vertex<T> *v, T &inf) const;
 	vector<Vertex<T> * > getVertexSet() const;
@@ -736,5 +741,38 @@ void Graph<T>::floydWarshallShortestPath() {
 
 }
 
+template <class T>
+vector<T> Graph<T>::findArt() const {
+	typename vector<Vertex<T>*>::const_iterator it= vertexSet.begin();
+	typename vector<Vertex<T>*>::const_iterator ite= vertexSet.end();
+	for (; it !=ite; it++)
+		(*it)->visited=false;
+	vector<T> res;
+	int counter=1;
+	it=vertexSet.begin();
+	for (; it !=ite; it++)
+	    if ( (*it)->visited==false )
+	    	findArt(*it,res,counter);
+	return res;
+}
+
+template <class T>
+void Graph<T>::findArt(Vertex<T> *v,vector<T> &res, int &counter) const {
+	v->visited = true;
+	v->low = v->num = counter++;
+	for(int i=0;i<v->adj.size();i++){
+		if( !v->adj[i].getDest()->visited ) { // ramo da árvore
+			v->adj[i].getDest()->parent = v;
+			findArt(v->adj[i].getDest(),res,counter);
+			v->low = min(v->low, v->adj[i].getDest()->low);
+			if(v->adj[i].getDest()->low >= v->num ){
+				res.push_back(v->info);
+			}
+		}
+		else
+			if ( v->parent != v->adj[i].getDest() ) //aresta de retorno
+				v->low = min(v->low, v->adj[i].getDest()->num);
+	}
+}
 
 #endif /* GRAPH_H_ */

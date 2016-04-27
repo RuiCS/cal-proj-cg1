@@ -24,7 +24,8 @@ void runInterface(){
 		cout << "4 - Encontrar caminho mais barato" << endl;
 		cout << "5 - Encontrar caminho mais curto" << endl;
 		cout << "6 - Encontrar caminho com menos transbordos" << endl;
-		cout << "7 - Sair " << endl;
+		cout << "7 - Econtrar pontos de articulação " << endl;
+		cout << "8 - Sair " << endl;
 		cout << "> "; cin >> option;
 		switch(option){
 		case 1:	graphView(nm); break;
@@ -45,7 +46,12 @@ void runInterface(){
 			cout << "STOP1 STOP2 ? "; cin >> s1 >> s2;
 			nm.findLeastLineSwitchesPath(s1, s2);
 			break;
-		case 7: cout << "Saindo..." << endl; exit(0); break;
+		case 7:
+			nm.getArt();
+			break;
+		case 8:
+			cout << "Saindo..." << endl; exit(0);
+			break;
 		default: exit(1); break;
 		}
 	}

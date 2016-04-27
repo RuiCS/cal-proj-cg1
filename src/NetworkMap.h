@@ -110,6 +110,10 @@ public:
 	 * @param s2 Codigo da paragem 2.
 	 */
 	void findLeastLineSwitchesPath(string s1, string s2);
+	/**
+	 * Verifica os pontos de articulção do grafo.
+	 */
+	void getArt();
 };
 
 /**
@@ -180,5 +184,6 @@ float distanceWeight(const Stop& s1, const Stop& s2);
  * @return float peso da aresta em termos de trocas.
  */
 float lineSwitchWeight(const Stop&s1, const Stop& s2);
+
 
 #endif /* SRC_NETWORKMAP_H_ */

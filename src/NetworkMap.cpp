@@ -286,6 +286,17 @@ void NetworkMap::findLeastLineSwitchesPath(string s1, string s2) {
 	cout << "NUMERO DE TRANSBORDOS: " << weight << endl << endl;
 }
 
+void NetworkMap::getArt(){
+	int counter=1;
+	cout<<"Pontos de articulação:\n";
+	vector<Stop> res;
+	res=map.findArt();
+	for(int i=0;i<res.size();i++){
+		cout<<res[i].getName()<< "\n";
+	}
+	cout<<"\n";
+}
+
 // Resets the edges and recalculates the edge weight according to a weight function
 void resetEdges(float(*weightFunction)(const Stop&, const Stop&), NetworkMap &nm) {
 	for (unsigned int i = 0; i < nm.getMap().getVertexSet().size(); i++) {
