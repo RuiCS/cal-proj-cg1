@@ -25,7 +25,8 @@ void runInterface(){
 		cout << "5 - Encontrar caminho mais curto" << endl;
 		cout << "6 - Encontrar caminho com menos transbordos" << endl;
 		cout << "7 - Econtrar pontos de articulação " << endl;
-		cout << "8 - Sair " << endl;
+		cout << "8 - Encontrar paragem" << endl;
+		cout << "9 - Sair " << endl;
 		cout << "> "; cin >> option;
 		switch(option){
 		case 1:	graphView(nm); break;
@@ -50,7 +51,12 @@ void runInterface(){
 			nm.getArt();
 			break;
 		case 8:
-			cout << "Saindo..." << endl; exit(0);
+			cout << "STOP ?"; cin >> s1;
+			nm.stopExistsInLine(s1);
+			break;
+		case 9:
+			cout << "Saindo..." << endl;
+			exit(0);
 			break;
 		default: exit(1); break;
 		}

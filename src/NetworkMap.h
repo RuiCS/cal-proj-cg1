@@ -114,6 +114,23 @@ public:
 	 * Verifica os pontos de articulção do grafo.
 	 */
 	void getArt();
+	/*
+	 * Guarda os nomes das paragens numa string
+	 *
+	 * @return nomes das paragens em formato string
+	 */
+	string getStopsString();
+	/*
+	 * Verifica se Paragem existe
+	 *
+	 * @param stopName nome da paragema pesquisar
+	 * @return numero de vezes que aparece
+	 */
+	int stopExists(string stopName);
+
+	vector<Stop> getStops();
+
+	bool stopExistsInLine(string stopName);
 };
 
 /**
@@ -184,6 +201,12 @@ float distanceWeight(const Stop& s1, const Stop& s2);
  * @return float peso da aresta em termos de trocas.
  */
 float lineSwitchWeight(const Stop&s1, const Stop& s2);
+
+string getStopNames(string stops);
+string getStopLines(string stops);
+vector<string> getSimilarStops(string stop, string stops, int distance);
+vector<string> getLinesForName(string stopName, vector<Stop> stops);
+
 
 
 #endif /* SRC_NETWORKMAP_H_ */

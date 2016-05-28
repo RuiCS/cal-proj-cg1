@@ -1,12 +1,14 @@
 #include "NetworkMap.h"
 #include <algorithm>
 #include <stdlib.h>
-#include <string.h>
+#include <string>
 #include <cstdio>
 #include "graphviewer.h"
 #include <fstream>
 #include <iostream>
 #include <sstream>
+#include <algorithm>
+#include "matcher.h"
 
 // Constructors -----------------------------------------------------------------
 
@@ -27,7 +29,6 @@ void NetworkMap::setMap(Graph<Stop> m){
 }
 
 // Methods -----------------------------------------------------------------
-
 bool NetworkMap::loadMap(string filepath) {
     string node, name, zone, slat, slon, time;
     float lat, lon;
@@ -129,6 +130,7 @@ void graphView( NetworkMap nm){
 	gv->defineVertexSize(40);
 	gv->defineEdgeColor("blue");
 	gv->defineVertexColor("yellow");
+	gv->defineEdgeCurved(false);
 
 	int edgeID = 0;
 
@@ -297,6 +299,52 @@ void NetworkMap::getArt(){
 	cout<<"\n";
 }
 
+string NetworkMap::getStopsString(){
+	string retorno;
+	for (int i = 0; i < map.getNumVertex(); i++){
+		retorno +=  map.getVertexSet()[i]->getInfo().getName() + "\n";
+	}
+	return retorno;
+}
+
+int NetworkMap::stopExists(string stopName){
+	string stopNames = getStopNames(getStopsString());
+	int retorno = kmp(stopNames, stopName);
+	return retorno;
+}
+
+bool NetworkMap::stopExistsInLine(string stopName){
+	int nTimes = stopExists(stopName);
+	if (nTimes == 0){
+		cout << "Paragem não encontrada! Será que quis dizer..." << endl;
+		vector<string> similarStops = getSimilarStops(stopName, getStopNames(getStopsString()), 3);
+		for (unsigned int i = 0; i < similarStops.size(); i++){
+			cout << similarStops[i] << "?" << endl;
+		}
+		return false;
+	}
+	else{
+		cout << "Paragem encontrada nas linhas: " << endl;
+		vector<string> lines = getLinesForName(stopName, getStops());
+		for (unsigned int i = 0; i < lines.size(); i++){
+			cout << lines[i] << endl;
+		}
+		return true;
+	}
+	return false;
+
+}
+
+vector<Stop> NetworkMap::getStops(){
+	vector<Stop> retorno;
+
+	for (int i = 0; i < getMap().getVertexSet().size(); i++){
+		retorno.push_back(getMap().getVertexSet()[i]->getInfo());
+	}
+
+	return retorno;
+}
+
 // Resets the edges and recalculates the edge weight according to a weight function
 void resetEdges(float(*weightFunction)(const Stop&, const Stop&), NetworkMap &nm) {
 	for (unsigned int i = 0; i < nm.getMap().getVertexSet().size(); i++) {
@@ -408,4 +456,77 @@ float calcPrice(int numZones) {
 		break;
 	}
 	return price;
+}
+
+string getStopNames(string stops){
+	string retorno, line;
+	stringstream ss(stops);
+	while(getline(ss, line)){
+		stringstream name(line);
+		string stopName;
+		while (!name.eof())
+		{
+			name >> stopName;
+			if (stopName == "-")
+				break;
+			else retorno += stopName + " ";
+		}
+		retorno += "\n";
+
+	}
+	return retorno;
+}
+
+string getStopLines(string stops){
+	string retorno, line;
+	stringstream ss(stops);
+	while(getline(ss, line)){
+		stringstream name(line);
+		string stopLine;
+		while (!name.eof())
+		{
+			name >> stopLine;
+			if (stopLine != "-")
+				continue;
+			else {
+				name >> stopLine;
+				retorno += stopLine;
+			}
+		}
+		retorno += "\n";
+
+	}
+	return retorno;
+}
+
+vector<string> getSimilarStops(string stop, string stops, int distance){
+	vector<string> retorno;
+	stringstream ss(stops);
+	string line;
+	while (!ss.eof()){
+		getline(ss, line);
+		int dis = editDistance(stop, line);
+		if (dis <= distance && !exists_in_vector(retorno, line))
+			retorno.push_back(line);
+	}
+	return retorno;
+}
+
+vector<string> getLinesForName(string stopName, vector<Stop> stops){
+	vector<string> retorno;
+	for (int i = 0; i < stops.size(); i++){
+
+		stringstream stop(stops[i].getName());
+		string selectedStopName;
+		string nameToCompare;
+		while (!stop.eof()){
+			stop >> selectedStopName;
+			if (selectedStopName == "-") break;
+			else nameToCompare += selectedStopName + " ";
+		}
+		if (nameToCompare.substr(0, nameToCompare.length() - 1) == stopName){
+			retorno.push_back(stops[i].getLine());
+		}
+	}
+	return retorno;
 }
