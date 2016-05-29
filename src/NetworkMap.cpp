@@ -359,11 +359,12 @@ bool NetworkMap::searchStopInLine(string line, string stopName){
 		return false;
 	}
 	string stops = getStopsForLine(line, getStops());
-	if(stopName.compare("todas")){
-		cout << "\nParagens da Linha D:\n" << stops << endl;
+	vector<string> lines = getLinesForName(stopName, getStops());
+	if(stopName == "todas"){
+		cout << "\nParagens da Linha " << line << ":\n" << stops << endl;
 		return true;
 	}
-	if (!numTimes || !stops.size()) {
+	if (!numTimes || !lines.size()) {
 		cout << "Paragem não encontrada!\n";
 		vector<string> similarStops = getSimilarStops(stopName, getStopNames(getStopsString()), 5);
 		if (similarStops.size()) {
@@ -618,7 +619,7 @@ string getStopsForLine(string line, vector<Stop> stops){
 			else lineToCompare += selectedStopLine + " ";
 		}
 		if (lineToCompare.substr(0, lineToCompare.length() - 1) == line){
-			retorno += stops[i].getName().substr(0,stops[i].getName().length()-4) + "\n";
+			retorno += stops[i].getName().substr(0,stops[i].getName().length()-(stops[i].getLine().length() + 2)) + "\n";
 		}
 	}
 	return retorno;
