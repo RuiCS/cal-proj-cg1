@@ -131,6 +131,9 @@ public:
 	vector<Stop> getStops();
 
 	bool stopExistsInLine(string stopName);
+
+	vector<vector<string> > stopNameMap();
+	string stopNameConverter(string stopName);
 };
 
 /**

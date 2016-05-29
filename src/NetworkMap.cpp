@@ -314,25 +314,83 @@ int NetworkMap::stopExists(string stopName){
 }
 
 bool NetworkMap::stopExistsInLine(string stopName){
-	int nTimes = stopExists(stopName);
-	if (nTimes == 0){
-		cout << "Paragem não encontrada! Será que quis dizer..." << endl;
-		vector<string> similarStops = getSimilarStops(stopName, getStopNames(getStopsString()), 3);
-		for (unsigned int i = 0; i < similarStops.size(); i++){
-			cout << similarStops[i] << "?" << endl;
+	int numTimes = stopExists(stopName);
+	vector<string> lines = getLinesForName(stopName, getStops());
+	if (!numTimes || !lines.size()) {
+		cout << "Paragem não encontrada!\n";
+		vector<string> similarStops = getSimilarStops(stopName, getStopNames(getStopsString()), 5);
+		if (similarStops.size()) {
+			cout << "Será que quis dizer...\n";
+			for (size_t i = 0; i < similarStops.size(); i++)
+				cout << "... " << similarStops[i] << "?\n";
 		}
+		cout << "\n";
 		return false;
-	}
-	else{
-		cout << "Paragem encontrada nas linhas: " << endl;
-		vector<string> lines = getLinesForName(stopName, getStops());
-		for (unsigned int i = 0; i < lines.size(); i++){
-			cout << lines[i] << endl;
-		}
+	} else {
+		cout << "Paragem encontrada nas linhas: \n";
+		for (size_t i = 0; i < lines.size(); i++)
+			cout << "Linha" << lines[i] << endl;
+		cout << "\n";
 		return true;
 	}
 	return false;
+}
 
+vector<vector<string> > NetworkMap::stopNameMap() {
+	vector<vector<string> > ret;
+	string s, name, node, trash, line;
+	for (int i = 0; i < map.getNumVertex(); i++)
+		s += map.getVertexSet()[i]->getInfo().getName() + " " + map.getVertexSet()[i]->getInfo().getNode() + "\n";
+	stringstream ss(s);
+	while(getline(ss, line)) {
+		stringstream iss(line);
+		getline(iss, name, '-');
+		name = name.substr(0, name.length() - 1);
+		node = line.substr(line.length() - 3);
+
+		bool found = false;
+		for (size_t i = 0; i < ret.size(); i++)
+			if (ret[i][0] == name) found = true;
+		if (!found) {
+			vector<string> add;
+			add.push_back(name);
+			add.push_back(node);
+			ret.push_back(add);
+		}
+	}
+	return ret;
+}
+
+string NetworkMap::stopNameConverter(string stopName) {
+	string stop = stopName, code = "ERROR";
+	int numTimes = stopExists(stopName);
+	vector<string> lines = getLinesForName(stopName, getStops());
+	vector<vector<string> > map = stopNameMap();
+
+	for (size_t i = 0; i < map.size(); i++) {
+		if (stop == map[i][1])
+			return stop;
+	}
+
+	if (!numTimes || !lines.size()) {
+		vector<string> similarStops = getSimilarStops(stopName, getStopNames(getStopsString()), 5);
+		if (similarStops.size()) {
+			int low = editDistance(stopName, similarStops[0]), index = 0;
+			for (size_t i = 1; i < similarStops.size(); i++)
+				if (editDistance(stopName, similarStops[i]) < low) {
+					low = editDistance(stopName, similarStops[i]);
+					index = i;
+				}
+			stop = similarStops[index];
+			stop = stop.substr(0, stop.length() - 1);
+		}
+	}
+
+	for (size_t i = 0; i < map.size(); i++)
+		if (map[i][0] == stop)
+			code = map[i][1];
+
+	return code;
 }
 
 vector<Stop> NetworkMap::getStops(){

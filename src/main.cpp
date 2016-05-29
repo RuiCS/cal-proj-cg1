@@ -26,32 +26,36 @@ void runInterface(){
 		cout << "6 - Encontrar caminho com menos transbordos" << endl;
 		cout << "7 - Econtrar pontos de articulação " << endl;
 		cout << "8 - Encontrar paragem" << endl;
-		cout << "9 - Sair " << endl;
+		cout << "10 - Sair " << endl;
 		cout << "> "; cin >> option;
 		switch(option){
 		case 1:	graphView(nm); break;
 		case 2: nm.displayMap(); break;
 		case 3:
-			cout << "STOP1 STOP2 ? "; cin >> s1 >> s2;
-			nm.findFastestPath(s1, s2);
+			cout << "Paragem 1 ? "; cin.ignore(); getline(cin, s1);
+			cout << "Paragem 2 ? "; cin.ignore(); getline(cin, s2);
+			nm.findFastestPath(nm.stopNameConverter(s1), nm.stopNameConverter(s2));
 			break;
 		case 4:
-			cout << "STOP1 STOP2 ? "; cin >> s1 >> s2;
-			nm.findCheapestPath(s1, s2);
+			cout << "Paragem 1 ? "; cin.ignore(); getline(cin, s1);
+			cout << "Paragem 2 ? "; cin.ignore(); getline(cin, s2);
+			nm.findCheapestPath(nm.stopNameConverter(s1), nm.stopNameConverter(s2));
 			break;
 		case 5:
-			cout << "STOP1 STOP2 ? "; cin >> s1 >> s2;
-			nm.findShortestPath(s1, s2);
+			cout << "Paragem 1 ? "; cin.ignore(); getline(cin, s1);
+			cout << "Paragem 2 ? "; cin.ignore(); getline(cin, s2);
+			nm.findShortestPath(nm.stopNameConverter(s1), nm.stopNameConverter(s2));
 			break;
 		case 6:
-			cout << "STOP1 STOP2 ? "; cin >> s1 >> s2;
-			nm.findLeastLineSwitchesPath(s1, s2);
+			cout << "Paragem 1 ? "; cin.ignore(); getline(cin, s1);
+			cout << "Paragem 2 ? "; cin.ignore(); getline(cin, s2);
+			nm.findLeastLineSwitchesPath(nm.stopNameConverter(s1), nm.stopNameConverter(s2));
 			break;
 		case 7:
 			nm.getArt();
 			break;
 		case 8:
-			cout << "STOP ?"; cin >> s1;
+			cout << "\nNome da Paragem ? "; cin.ignore(); getline(cin, s1);
 			nm.stopExistsInLine(s1);
 			break;
 		case 9:
