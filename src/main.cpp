@@ -26,6 +26,7 @@ void runInterface(){
 		cout << "6 - Encontrar caminho com menos transbordos" << endl;
 		cout << "7 - Econtrar pontos de articulação " << endl;
 		cout << "8 - Encontrar paragem" << endl;
+		cout << "9 - Encontrar paragem na linha" << endl;
 		cout << "10 - Sair " << endl;
 		cout << "> "; cin >> option;
 		switch(option){
@@ -59,6 +60,11 @@ void runInterface(){
 			nm.stopExistsInLine(s1);
 			break;
 		case 9:
+			cout << "\nNome da Linha ? "; cin.ignore(); getline(cin, s1);
+			cout << "\nNome da Paragem ? (se quiser ver todas escreva \"todas\") "; cin.ignore(); getline(cin, s2);
+			nm.searchStopInLine(s1,s2);
+			break;
+		case 10:
 			cout << "Saindo..." << endl;
 			exit(0);
 			break;

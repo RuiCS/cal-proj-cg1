@@ -307,9 +307,24 @@ string NetworkMap::getStopsString(){
 	return retorno;
 }
 
+string NetworkMap::getLinesString(){
+	string retorno;
+	for (int i = 0; i < map.getNumVertex(); i++){
+		if(!kmp(retorno,map.getVertexSet()[i]->getInfo().getLine()))
+			retorno +=  map.getVertexSet()[i]->getInfo().getLine() + "\n";
+	}
+	return retorno;
+}
+
 int NetworkMap::stopExists(string stopName){
 	string stopNames = getStopNames(getStopsString());
 	int retorno = kmp(stopNames, stopName);
+	return retorno;
+}
+
+int NetworkMap::lineExists(string line){
+	string lines = getLinesString();
+	int retorno = kmp(lines, line);
 	return retorno;
 }
 
@@ -332,6 +347,40 @@ bool NetworkMap::stopExistsInLine(string stopName){
 			cout << "Linha" << lines[i] << endl;
 		cout << "\n";
 		return true;
+	}
+	return false;
+}
+
+bool NetworkMap::searchStopInLine(string line, string stopName){
+	int numTimes = stopExists(stopName);
+	if(!lineExists(line)){
+		cout << "Linha não existe!\n";
+		cout << "Linhas:\n" << getLinesString();
+		return false;
+	}
+	string stops = getStopsForLine(line, getStops());
+	if(stopName.compare("todas")){
+		cout << "\nParagens da Linha D:\n" << stops << endl;
+		return true;
+	}
+	if (!numTimes || !stops.size()) {
+		cout << "Paragem não encontrada!\n";
+		vector<string> similarStops = getSimilarStops(stopName, getStopNames(getStopsString()), 5);
+		if (similarStops.size()) {
+			cout << "Será que quis dizer...\n";
+			for (size_t i = 0; i < similarStops.size(); i++)
+				cout << "... " << similarStops[i] << "?\n";
+		}
+		cout << "\n";
+		return false;
+	} else {
+		if(!kmp(stops,stopName)){
+			cout << "Paragem não existe na linha " << line << "." << endl;
+			return false;
+		}else{
+			cout << "Paragem existe na linha " << line << "." << endl;
+			return true;
+		}
 	}
 	return false;
 }
@@ -557,6 +606,24 @@ string getStopLines(string stops){
 	return retorno;
 }
 
+string getStopsForLine(string line, vector<Stop> stops){
+	string retorno;
+	for (int i = 0; i < stops.size(); i++){
+		stringstream stop(stops[i].getLine());
+		string selectedStopLine;
+		string lineToCompare;
+		while (!stop.eof()){
+			stop >> selectedStopLine;
+			if (selectedStopLine == "-") break;
+			else lineToCompare += selectedStopLine + " ";
+		}
+		if (lineToCompare.substr(0, lineToCompare.length() - 1) == line){
+			retorno += stops[i].getName().substr(0,stops[i].getName().length()-4) + "\n";
+		}
+	}
+	return retorno;
+}
+
 vector<string> getSimilarStops(string stop, string stops, int distance){
 	vector<string> retorno;
 	stringstream ss(stops);
@@ -572,8 +639,7 @@ vector<string> getSimilarStops(string stop, string stops, int distance){
 
 vector<string> getLinesForName(string stopName, vector<Stop> stops){
 	vector<string> retorno;
-	for (int i = 0; i < stops.size(); i++){
-
+	for (unsigned int i = 0; i < stops.size(); i++){
 		stringstream stop(stops[i].getName());
 		string selectedStopName;
 		string nameToCompare;

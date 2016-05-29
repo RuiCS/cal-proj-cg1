@@ -121,16 +121,24 @@ public:
 	 */
 	string getStopsString();
 	/*
+	 * Guarda os nomes das linhas numa string
+	 *
+	 * @return nomes das linhas em formato string
+	 */
+	string getLinesString();
+	/*
 	 * Verifica se Paragem existe
 	 *
 	 * @param stopName nome da paragema pesquisar
 	 * @return numero de vezes que aparece
 	 */
 	int stopExists(string stopName);
+	int lineExists(string line);
 
 	vector<Stop> getStops();
 
 	bool stopExistsInLine(string stopName);
+	bool searchStopInLine(string line, string stopName);
 
 	vector<vector<string> > stopNameMap();
 	string stopNameConverter(string stopName);
@@ -207,6 +215,7 @@ float lineSwitchWeight(const Stop&s1, const Stop& s2);
 
 string getStopNames(string stops);
 string getStopLines(string stops);
+string getStopsForLine(string line, vector<Stop> stops);
 vector<string> getSimilarStops(string stop, string stops, int distance);
 vector<string> getLinesForName(string stopName, vector<Stop> stops);
 
