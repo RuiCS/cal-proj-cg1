@@ -61,7 +61,7 @@ void runInterface(){
 			break;
 		case 9:
 			cout << "\nNome da Linha ? "; cin.ignore(); getline(cin, s1);
-			cout << "\nNome da Paragem ? (se quiser ver todas escreva \"todas\") "; cin.ignore(); getline(cin, s2);
+			cout << "\nNome da Paragem ? (se quiser ver todas escreva \"todas\") "; getline(cin, s2);
 			nm.searchStopInLine(s1,s2);
 			break;
 		case 10:

@@ -359,7 +359,7 @@ bool NetworkMap::searchStopInLine(string line, string stopName){
 		return false;
 	}
 	string stops = getStopsForLine(line, getStops());
-	if(stopName.compare("todas")){
+	if(stopName=="todas"){
 		cout << "\nParagens da Linha D:\n" << stops << endl;
 		return true;
 	}
@@ -375,10 +375,10 @@ bool NetworkMap::searchStopInLine(string line, string stopName){
 		return false;
 	} else {
 		if(!kmp(stops,stopName)){
-			cout << "Paragem não existe na linha " << line << "." << endl;
+			cout << "Paragem não existe na linha " << line << "." << endl << endl;
 			return false;
 		}else{
-			cout << "Paragem existe na linha " << line << "." << endl;
+			cout << "Paragem existe na linha " << line << "." << endl << endl;
 			return true;
 		}
 	}
