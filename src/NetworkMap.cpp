@@ -201,21 +201,52 @@ float NetworkMap::pathWeight(const Stop& s1, const Stop& s2) {
 	return weight;
 }
 
-vector<Stop> NetworkMap::findLightestPath(string s1, string s2, float &weight) {
+vector<Stop> NetworkMap::findLightestPath(string s1, string s2, string line1, string line2, float &weight) {
 	vector<Stop> beginStops, endStops;
 	vector<vector<Stop> > paths;
 	float lightestPathWeight = 999999.0;
 	int lightestPathIndex = -1;
 
+	bool anyLine1 = line1 == "qualquer";
+	bool anyLine2 = line2 == "qualquer";
+
+	if (!anyLine1){
+		if (!lineExists(line1)){
+			cout << "ERRO: Primeira linha não existe e não é qualquer!" << endl;
+			vector<Stop> err;
+			return err;
+		}
+	}
+
+	if (!anyLine2){
+		if (!lineExists(line2)){
+			cout << "ERRO: Primeira linha não existe e não é qualquer!" << endl;
+			vector<Stop> err;
+			return err;
+		}
+	}
+
 	for (unsigned int i = 0; i < map.getVertexSet().size(); i++) {
-		if (map.getVertexSet()[i]->getInfo().getNode() == s1)
-			beginStops.push_back(map.getVertexSet()[i]->getInfo());
-		if (map.getVertexSet()[i]->getInfo().getNode() == s2)
-			endStops.push_back(map.getVertexSet()[i]->getInfo());
+		if (anyLine1){
+			if (map.getVertexSet()[i]->getInfo().getNode() == s1)
+				beginStops.push_back(map.getVertexSet()[i]->getInfo());
+		}
+		else {
+			if (map.getVertexSet()[i]->getInfo().getNode() == s1 && map.getVertexSet()[i]->getInfo().getLine() == " " + line1)
+				beginStops.push_back(map.getVertexSet()[i]->getInfo());
+		}
+		if (anyLine2){
+			if (map.getVertexSet()[i]->getInfo().getNode() == s2)
+				endStops.push_back(map.getVertexSet()[i]->getInfo());
+		}
+		else {
+			if (map.getVertexSet()[i]->getInfo().getNode() == s2 && map.getVertexSet()[i]->getInfo().getLine() == " " + line2)
+				endStops.push_back(map.getVertexSet()[i]->getInfo());
+		}
 	}
 
 	if (beginStops.size() == 0 || endStops.size() == 0) {
-		cout << "ERRO : Pelo menos uma das paragens não existe! " << endl << endl;
+		cout << "ERRO : Pelo menos uma das paragens não existe nas linhas selecionadas! " << endl << endl;
 		vector<Stop> err;
 		return err;
 	}
@@ -236,10 +267,10 @@ vector<Stop> NetworkMap::findLightestPath(string s1, string s2, float &weight) {
 	return paths[lightestPathIndex];
 }
 
-void NetworkMap::findFastestPath(string s1, string s2) {
+void NetworkMap::findFastestPath(string s1, string s2, string line1, string line2) {
 	float weight = 0;
 	resetEdges(&timeWeight, *this);
-	vector<Stop> path = findLightestPath(s1, s2, weight);
+	vector<Stop> path = findLightestPath(s1, s2, line1, line2, weight);
 
 	if (path.size() == 0) return;
 	cout << endl << "ITINERARIO A PERCORRER:" << endl;
@@ -249,10 +280,10 @@ void NetworkMap::findFastestPath(string s1, string s2) {
 	cout << "TEMPO DE VIAGEM: " << weight / 60 << " min " << endl << endl;
 }
 
-void NetworkMap::findCheapestPath(string s1, string s2) {
+void NetworkMap::findCheapestPath(string s1, string s2, string line1, string line2) {
 	float weight = 0;
 	resetEdges(&priceWeight, *this);
-	vector<Stop> path = findLightestPath(s1, s2, weight);
+	vector<Stop> path = findLightestPath(s1, s2, line1, line2, weight);
 
 	if (path.size() == 0) return;
 	cout << endl << "ITINERARIO A PERCORRER:" << endl;
@@ -262,10 +293,10 @@ void NetworkMap::findCheapestPath(string s1, string s2) {
 	cout << "PRECO DA VIAGEM: " << calcPrice((int)weight) << "eur ( " << weight  << " ZONA(S) )" << endl << endl;
 }
 
-void NetworkMap::findShortestPath(string s1, string s2) {
+void NetworkMap::findShortestPath(string s1, string s2, string line1, string line2) {
 	float weight = 0;
 	resetEdges(&distanceWeight, *this);
-	vector<Stop> path = findLightestPath(s1, s2, weight);
+	vector<Stop> path = findLightestPath(s1, s2, line1, line2, weight);
 
 	if (path.size() == 0) return;
 	cout << endl << "ITINERARIO A PERCORRER:" << endl;
@@ -275,10 +306,10 @@ void NetworkMap::findShortestPath(string s1, string s2) {
 	cout << "DISTANCA PERCORRIDA: " << weight/1000 << " km" << endl << endl;
 }
 
-void NetworkMap::findLeastLineSwitchesPath(string s1, string s2) {
+void NetworkMap::findLeastLineSwitchesPath(string s1, string s2, string line1, string line2) {
 	float weight = 0;
 	resetEdges(&lineSwitchWeight, *this);
-	vector<Stop> path = findLightestPath(s1, s2, weight);
+	vector<Stop> path = findLightestPath(s1, s2, line1, line2,weight);
 
 	if (path.size() == 0) return;
 	cout << endl << "ITINERARIO A PERCORRER:" << endl;

@@ -78,38 +78,48 @@ public:
 	 *
 	 * @param s1 Codigo da paragem 1.
 	 * @param s2 Codigo da paragem 2.
+	 * @param line1 Linha 1
+	 * @param line2 Linha 2
 	 * @param weight peso total
 	 * @return vector<Stop> vetor com todas as paragens do caminho com menor peso.
 	 */
-	vector<Stop> findLightestPath(string s1, string s2, float& weight);
+	vector<Stop> findLightestPath(string s1, string s2, string line1, string line2, float &weight);
 	/**
 	 * Calcula o caminho mais rápido entre duas paragens.
 	 *
 	 * @param s1 Codigo da paragem 1.
 	 * @param s2 Codigo da paragem 2.
+	 * @param line1 Linha 1
+	 * @param line2 Linha 2
 	 */
-	void findFastestPath(string s1, string s2);
+	void findFastestPath(string s1, string s2, string line1, string line2);
 	/**
 	 * Calcula o caminho mais barato entre duas paragens.
 	 *
 	 * @param s1 Codigo da paragem 1.
 	 * @param s2 Codigo da paragem 2.
+	 * @param line1 Linha 1
+	 * @param line2 Linha 2
 	 */
-	void findCheapestPath(string s1, string s2);
+	void findCheapestPath(string s1, string s2, string line1, string line2);
 	/**
 	 * Calcula o caminho mais curto entre duas paragens.
 	 *
 	 * @param s1 Codigo da paragem 1.
 	 * @param s2 Codigo da paragem 2.
+	 * @param line1 Linha 1
+	 * @param line2 Linha 2
 	 */
-	void findShortestPath(string s1, string s2);
+	void findShortestPath(string s1, string s2, string line1, string line2);
 	/**
 	 * Calcula o caminho com menos trocas de veiculo entre duas paragens.
 	 *
 	 * @param s1 Codigo da paragem 1.
 	 * @param s2 Codigo da paragem 2.
+	 * @param line1 Linha 1
+	 * @param line2 Linha 2
 	 */
-	void findLeastLineSwitchesPath(string s1, string s2);
+	void findLeastLineSwitchesPath(string s1, string s2, string line1, string line2);
 	/**
 	 * Verifica os pontos de articulção do grafo.
 	 */
@@ -129,18 +139,49 @@ public:
 	/*
 	 * Verifica se Paragem existe
 	 *
-	 * @param stopName nome da paragema pesquisar
+	 * @param stopName nome da paragem a pesquisar
 	 * @return numero de vezes que aparece
 	 */
 	int stopExists(string stopName);
+	/*
+	 * Verifica se uma linha existe
+	 *
+	 * @param line Linha a pesquisar
+	 * @return numero de vezes que aparece na rede
+	 */
 	int lineExists(string line);
-
+	/*
+	 * Obter paragens em instancias Stop
+	 *
+	 * @return vetor de stops
+	 */
 	vector<Stop> getStops();
-
+	/*
+	 * Verifica as linhas de uma paragem
+	 *
+	 * @param stopName paragem
+	 * @return paragem existe
+	 */
 	bool stopExistsInLine(string stopName);
+	/*
+	 * Verifica as paragens de uma linha
+	 *
+	 * @param line Linha a pesquisar
+	 * @param stopName paragem a pesquisar. "todas" mostra todas as paragens.
+	 * @return linha existe
+	 */
 	bool searchStopInLine(string line, string stopName);
-
+	/*
+	 * Obter nomes das linhas
+	 * @return Nomes das linhas
+	 */
 	vector<vector<string> > stopNameMap();
+	/*
+	 * Converter nomes das linhas do formato "Nome - linha" para só Nome
+	 *
+	 * @param stopName nome da Paragem
+	 * @return nome convertido
+	 */
 	string stopNameConverter(string stopName);
 };
 
@@ -212,11 +253,39 @@ float distanceWeight(const Stop& s1, const Stop& s2);
  * @return float peso da aresta em termos de trocas.
  */
 float lineSwitchWeight(const Stop&s1, const Stop& s2);
-
+/**
+ * Obter nomes das paragens numa string
+ * @param stops paragens com nome completo já em formato string
+ * @return nomes das paragens em string
+ */
 string getStopNames(string stops);
+/**
+ * Obter nomes das linhas numa string
+ * @param stops paragens com nome completo já em formato string
+ * @return nomes das linhas em string
+ */
 string getStopLines(string stops);
+/*
+ * Obter todas as paragens para a linha escolhida
+ * @param line linha escolhida
+ * @param stops todas as paragens
+ * @return paragens da linha, em formato string
+ */
 string getStopsForLine(string line, vector<Stop> stops);
+/**
+ * Obter nomes sugeridos
+ * @param stop paragem introduzida
+ * @param stops todas as paragens
+ * @param distance distancia maxima entre palavras sugeridas e a escolhida
+ * @return todas as paragens sugeridas
+ */
 vector<string> getSimilarStops(string stop, string stops, int distance);
+/*
+ * Obter linhas para a paragem
+ * @param stopName paragem
+ * @param stps todas as paragens
+ * @return linhas da paragem
+ */
 vector<string> getLinesForName(string stopName, vector<Stop> stops);
 
 

@@ -9,7 +9,7 @@ using namespace std;
 void runInterface(){
 
 	int option;
-	string s1, s2;
+	string s1, s2, l1, l2;
 
 	cout << "Bem Vindo ao TripPlanner!" << endl;
 	NetworkMap nm = NetworkMap();
@@ -34,23 +34,31 @@ void runInterface(){
 		case 2: nm.displayMap(); break;
 		case 3:
 			cout << "Paragem 1 ? "; cin.ignore(); getline(cin, s1);
-			cout << "Paragem 2 ? "; cin.ignore(); getline(cin, s2);
-			nm.findFastestPath(nm.stopNameConverter(s1), nm.stopNameConverter(s2));
+			cout << "Paragem 2 ? "; getline(cin, s2);
+			cout << "Linha 1 ? Insira \"qualquer\" para qualquer uma. "; getline(cin, l1);
+			cout << "Linha 2 ? Insira \"qualquer\" para qualquer uma. "; getline(cin, l2);
+			nm.findFastestPath(nm.stopNameConverter(s1), nm.stopNameConverter(s2), l1, l2);
 			break;
 		case 4:
 			cout << "Paragem 1 ? "; cin.ignore(); getline(cin, s1);
 			cout << "Paragem 2 ? "; cin.ignore(); getline(cin, s2);
-			nm.findCheapestPath(nm.stopNameConverter(s1), nm.stopNameConverter(s2));
+			cout << "Linha 1 ? Insira \"qualquer\" para qualquer uma. "; getline(cin, l1);
+			cout << "Linha 2 ? Insira \"qualquer\" para qualquer uma. "; getline(cin, l2);
+			nm.findCheapestPath(nm.stopNameConverter(s1), nm.stopNameConverter(s2), l1, l2);
 			break;
 		case 5:
 			cout << "Paragem 1 ? "; cin.ignore(); getline(cin, s1);
 			cout << "Paragem 2 ? "; cin.ignore(); getline(cin, s2);
-			nm.findShortestPath(nm.stopNameConverter(s1), nm.stopNameConverter(s2));
+			cout << "Linha 1 ? Insira \"qualquer\" para qualquer uma. "; getline(cin, l1);
+			cout << "Linha 2 ? Insira \"qualquer\" para qualquer uma. "; getline(cin, l2);
+			nm.findShortestPath(nm.stopNameConverter(s1), nm.stopNameConverter(s2), l1, l2);
 			break;
 		case 6:
 			cout << "Paragem 1 ? "; cin.ignore(); getline(cin, s1);
 			cout << "Paragem 2 ? "; cin.ignore(); getline(cin, s2);
-			nm.findLeastLineSwitchesPath(nm.stopNameConverter(s1), nm.stopNameConverter(s2));
+			cout << "Linha 1 ? Insira \"qualquer\" para qualquer uma. "; getline(cin, l1);
+			cout << "Linha 2 ? Insira \"qualquer\" para qualquer uma. "; getline(cin, l2);
+			nm.findLeastLineSwitchesPath(nm.stopNameConverter(s1), nm.stopNameConverter(s2), l1, l2);
 			break;
 		case 7:
 			nm.getArt();
